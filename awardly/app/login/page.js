@@ -4,7 +4,7 @@ import { useState } from "react";
 import Parse from "@/lib/Parse";
 import { useRouter } from "next/navigation";
 import styles from "./login.module.css";
-import DarkVeil from "../../components/DarkVeil";
+import DarkVeil from "../components/DarkVeil";
 
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
