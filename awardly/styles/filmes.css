@@ -130,6 +130,74 @@
   font-style: italic;
 }
 
+.filmes-busca-wrapper {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto 40px;
+}
+
+.filmes-busca {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text, #fff);
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  padding: 10px 36px 10px 16px;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.filmes-busca::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.filmes-busca:focus {
+  border-color: var(--gold, #FFD000);
+}
+
+.filmes-busca-limpar {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.filmes-busca-limpar:hover {
+  color: var(--gold, #FFD000);
+}
+
+.filmes-vazio {
+  padding: 64px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.filmes-vazio p {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.filmes-vazio span {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
 @keyframes subirFadeIn {
   from {
     opacity: 0;

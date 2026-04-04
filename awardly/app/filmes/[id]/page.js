@@ -239,10 +239,7 @@ export default function FilmeUnico({ params }) {
         setElenco(creditos.cast?.slice(0, 20) || []);
         setTrailer(trailerYT?.key || null);
         setClassificacao(classificacaoBR || 'N/A');
-        setImagens([
-          ...(imgs.backdrops?.slice(0, 20) || []),
-          ...(imgs.posters?.slice(0, 10) || []),
-        ]);
+        setImagens(imgs.backdrops?.slice(0, 20) || []);
         setCategorias(dadosOscar.categorias);
         setVencedores(dadosOscar.vencedores);
 
