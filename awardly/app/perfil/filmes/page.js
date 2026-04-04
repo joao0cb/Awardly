@@ -6,11 +6,39 @@ import NavbarLogin from "../../components/NavbarLogin";
 import TabsPerfil from "../../components/TabsPerfil";
 import styles from "@/styles/perfil.module.css";
 import { getFilme, getImageURL } from "@/lib/tmdb";
+import { useRouter } from "next/navigation";
+
+function Estatuetas({ valor }) {
+  return (
+    <div className={styles.estatuetasRow}>
+      {[1, 2, 3, 4, 5].map((i) => {
+        const cheia = valor >= i;
+        const meia = !cheia && valor >= i - 0.5;
+        return (
+          <div key={i} className={styles.estatuetaMiniSlot}>
+            {cheia ? (
+              <img src="/oscar2.png" className={styles.estatuetaMini} />
+            ) : meia ? (
+              <div style={{ position: "relative", width: 16, height: 16 }}>
+                <img src="/oscar2.png" className={styles.estatuetaMini} style={{ clipPath: "inset(0 50% 0 0)", position: "absolute" }} />
+                <img src="/oscarvazio.png" className={styles.estatuetaMini} style={{ clipPath: "inset(0 0 0 50%)", position: "absolute", opacity: 0.3 }} />
+              </div>
+            ) : (
+              <img src="/oscarvazio.png" className={styles.estatuetaMini} style={{ opacity: 0.3 }} />
+            )}
+          </div>
+        );
+      })}
+      {valor > 0 && <span className={styles.estatuetaMiniValor}>{valor}</span>}
+    </div>
+  );
+}
 
 export default function PerfilFilmes() {
-  const [avaliacoes, setAvaliacoes] = useState([]);
+  const [logs, setLogs] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [usuario, setUsuario] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     async function carregar() {
@@ -19,9 +47,9 @@ export default function PerfilFilmes() {
       if (!user) { setCarregando(false); return; }
 
       try {
-        const query = new Parse.Query("AvaliacaoFilme");
+        const query = new Parse.Query("Log");
         query.equalTo("usuarioId", user);
-        query.descending("createdAt");
+        query.descending("dataAssistido");
         const resultados = await query.find();
 
         const comDetalhes = await Promise.allSettled(
@@ -29,16 +57,17 @@ export default function PerfilFilmes() {
             const filme = await getFilme(r.get("filmeId"));
             return {
               filme,
-              nota: r.get("nota"),
-              oscarAno: r.get("oscarAno"),
+              estatuetas: r.get("estatuetas") || 0,
+              like: r.get("like") || false,
+              dataAssistido: r.get("dataAssistido"),
               id: r.id,
             };
           })
         );
 
-        setAvaliacoes(
+        setLogs(
           comDetalhes
-            .filter((r) => r.status === "fulfilled")
+            .filter((r) => r.status === "fulfilled" && r.value.filme)
             .map((r) => r.value)
         );
       } catch (e) {
@@ -70,39 +99,52 @@ export default function PerfilFilmes() {
           <div className={styles.headerInfo}>
             <h1 className={styles.nomeUsuario}>{nome}</h1>
           </div>
-          <button className={styles.btnEditar}>Editar perfil</button>
+          <button className={styles.btnEditar} onClick={() => router.push("/editarPerfil")}>
+            Editar perfil
+          </button>
         </div>
       </div>
 
       <TabsPerfil />
 
       <div className={styles.conteudoFull}>
-        <h2 className={styles.tituloSecao} style={{ marginBottom: 24 }}>
-          todos os filmes avaliados
-        </h2>
+        <div className={styles.conteudoFullHeader}>
+          <h2 className={styles.tituloSecao}>todos os filmes</h2>
+          {!carregando && <span className={styles.conteudoCount}>{logs.length} registros</span>}
+        </div>
 
         {carregando ? (
           <div className={styles.gradeFilmesAval}>
-            {Array.from({ length: 8 }).map((_, i) => (
+            {Array.from({ length: 10 }).map((_, i) => (
               <div key={i} className={styles.cardFilmeAvalEsq} />
             ))}
           </div>
-        ) : avaliacoes.length === 0 ? (
-          <p className={styles.vazio}>Você ainda não avaliou nenhum filme.</p>
+        ) : logs.length === 0 ? (
+          <div className={styles.vazioWrap}>
+            <p className={styles.vazio}>Você ainda não registrou nenhum filme.</p>
+            <p className={styles.vazioDica}>Use o botão "+ log" na navbar para começar.</p>
+          </div>
         ) : (
           <div className={styles.gradeFilmesAval}>
-            {avaliacoes.map(({ filme, nota, oscarAno }) => (
-              <div key={filme.id} className={styles.cardFilmeAval}>
+            {logs.map(({ filme, estatuetas, like, dataAssistido, id }) => (
+              <div key={id} className={styles.cardFilmeAval}>
                 <div className={styles.cardFilmeAvalImg}>
                   <img
                     src={getImageURL(filme.poster_path, "w342")}
                     alt={filme.title}
                   />
-                  <span className={styles.cardFilmeNota}>{nota}</span>
+                  {like && (
+                    <img src="/envelopecoracao.png" className={styles.cardFilmeLike} alt="gostei" />
+                  )}
                 </div>
                 <div className={styles.cardFilmeAvalInfo}>
                   <p className={styles.cardFilmeAvalTitulo}>{filme.title}</p>
-                  <span className={styles.cardFilmeAvalAno}>Oscar {oscarAno}</span>
+                  {estatuetas > 0 && <Estatuetas valor={estatuetas} />}
+                  {dataAssistido && (
+                    <span className={styles.cardFilmeAvalAno}>
+                      {new Date(dataAssistido).toLocaleDateString("pt-BR", { month: "short", year: "numeric" })}
+                    </span>
+                  )}
                 </div>
               </div>
             ))}

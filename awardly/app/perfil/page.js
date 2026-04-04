@@ -5,43 +5,8 @@ import Parse from "@/lib/parseClient";
 import NavbarLogin from "../components/NavbarLogin";
 import TabsPerfil from "../components/TabsPerfil";
 import styles from "@/styles/perfil.module.css";
-import { getImageURL } from "@/lib/tmdb";
+import { getFilme, getImageURL } from "@/lib/tmdb";
 import { useRouter } from "next/navigation";
-
-const FILMES_FAVORITOS = [
-  { id: 1064213, poster_path: "/aosm8NMQ3UyoBVpSxyimorCQykC.jpg", title: "Ainda Estou Aqui" },
-  { id: 1054867, poster_path: "/kYgQkdIfHqhvRtQKGSxaJiRJZfg.jpg", title: "Uma Batalha Após a Outra" },
-  { id: 693134, poster_path: "/imdb9bHewgU2RmkRmCxe2y0O4Ij.jpg", title: "Duna: Parte Dois" },
-  { id: 974576, poster_path: "/xgGGinKRL8xeRdjpvkzKorrvkNO.jpg", title: "O Aprendiz" },
-];
-
-const ATIVIDADE_RECENTE = [
-  { tipo: "review", filme: "Ainda Estou Aqui", nota: 9.2, texto: "Uma obra devastadora e necessária.", data: "2 dias atrás" },
-  { tipo: "watchlist", filme: "O Brutalista", data: "5 dias atrás" },
-  { tipo: "avaliacao", filme: "Duna: Parte Dois", nota: 8.5, data: "1 semana atrás" },
-  { tipo: "seguindo", usuario: "maria_cinefila", data: "1 semana atrás" },
-];
-
-const REVIEWS_RECENTES = [
-  {
-    filme: "Ainda Estou Aqui",
-    poster: "/aosm8NMQ3UyoBVpSxyimorCQykC.jpg",
-    nota: 9.2,
-    texto: "Uma obra devastadora e necessária. Fernanda Torres entrega uma das melhores atuações dos últimos anos.",
-    categoria: "Melhor Filme",
-    ano: 2025,
-    data: "2 dias atrás",
-  },
-  {
-    filme: "Duna: Parte Dois",
-    poster: "/imdb9bHewgU2RmkRmCxe2y0O4Ij.jpg",
-    nota: 8.5,
-    texto: "Épico visual sem precedentes. Villeneuve consolida sua posição como um dos maiores diretores da atualidade.",
-    categoria: "Melhor Direção",
-    ano: 2025,
-    data: "1 semana atrás",
-  },
-];
 
 function EstatCard({ valor, label }) {
   return (
@@ -55,40 +20,45 @@ function EstatCard({ valor, label }) {
 function FilmeFavorito({ filme }) {
   return (
     <div className={styles.filmeFav}>
-      <img
-        src={getImageURL(filme.poster_path, "w342")}
-        alt={filme.title}
-        className={styles.filmeFavImg}
-      />
+      {filme.poster_path ? (
+        <img
+          src={getImageURL(filme.poster_path, "w342")}
+          alt={filme.title || filme.nome}
+          className={styles.filmeFavImg}
+        />
+      ) : (
+        <div className={styles.filmeFavSemPoster}>
+          <span>{filme.title || filme.nome}</span>
+        </div>
+      )}
       <div className={styles.filmeFavOverlay}>
-        <span className={styles.filmeFavTitulo}>{filme.title}</span>
+        <span className={styles.filmeFavTitulo}>{filme.title || filme.nome}</span>
       </div>
     </div>
   );
 }
 
-function AtividadeItem({ item }) {
-  const icones = {
-    review: "✍️",
-    watchlist: "🎬",
-    avaliacao: "⭐",
-    seguindo: "👤",
-  };
-
-  const textos = {
-    review: `avaliou "${item.filme}" com ${item.nota}`,
-    watchlist: `adicionou "${item.filme}" à watchlist`,
-    avaliacao: `deu nota ${item.nota} para "${item.filme}"`,
-    seguindo: `começou a seguir ${item.usuario}`,
-  };
-
+function Estatuetas({ valor }) {
   return (
-    <div className={styles.atividadeItem}>
-      <span className={styles.atividadeIcone}>{icones[item.tipo]}</span>
-      <div className={styles.atividadeInfo}>
-        <p className={styles.atividadeTexto}>{textos[item.tipo]}</p>
-        <span className={styles.atividadeData}>{item.data}</span>
-      </div>
+    <div className={styles.estatuetasRow}>
+      {[1, 2, 3, 4, 5].map((i) => {
+        const cheia = valor >= i;
+        const meia = !cheia && valor >= i - 0.5;
+        return (
+          <div key={i} className={styles.estatuetaMiniSlot}>
+            {cheia ? (
+              <img src="/oscar2.png" className={styles.estatuetaMini} />
+            ) : meia ? (
+              <div style={{ position: "relative", width: 16, height: 16 }}>
+                <img src="/oscar2.png" className={styles.estatuetaMini} style={{ clipPath: "inset(0 50% 0 0)", position: "absolute" }} />
+                <img src="/oscarvazio.png" className={styles.estatuetaMini} style={{ clipPath: "inset(0 0 0 50%)", position: "absolute", opacity: 0.3 }} />
+              </div>
+            ) : (
+              <img src="/oscarvazio.png" className={styles.estatuetaMini} style={{ opacity: 0.3 }} />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -97,29 +67,60 @@ function ReviewCard({ review }) {
   return (
     <div className={styles.reviewCard}>
       <img
-        src={getImageURL(review.poster, "w185")}
-        alt={review.filme}
+        src={getImageURL(review.poster_path, "w185")}
+        alt={review.titulo}
         className={styles.reviewPoster}
       />
       <div className={styles.reviewBody}>
         <div className={styles.reviewHeader}>
-          <span className={styles.reviewFilme}>{review.filme}</span>
-          <span className={styles.reviewNota}>{review.nota}</span>
+          <span className={styles.reviewFilme}>{review.titulo}</span>
+          {review.like && (
+            <img src="/envelopecoracao.png" className={styles.reviewEnvelope} alt="gostei" />
+          )}
         </div>
-        <span className={styles.reviewCategoria}>
-          Oscar {review.ano} · {review.categoria}
-        </span>
-        <p className={styles.reviewTexto}>{review.texto}</p>
+        {review.estatuetas > 0 && <Estatuetas valor={review.estatuetas} />}
+        <p className={styles.reviewTexto}>{review.review}</p>
         <span className={styles.reviewData}>{review.data}</span>
       </div>
     </div>
   );
 }
 
+function AtividadeItem({ item }) {
+  const icones = { log: "🎬", review: "✍️", seguindo: "👤" };
+  return (
+    <div className={styles.atividadeItem}>
+      <span className={styles.atividadeIcone}>{icones[item.tipo]}</span>
+      <div className={styles.atividadeInfo}>
+        <p className={styles.atividadeTexto}>{item.texto}</p>
+        <span className={styles.atividadeData}>{item.data}</span>
+      </div>
+    </div>
+  );
+}
+
+function tempoRelativo(date) {
+  if (!date) return "";
+  const diff = Date.now() - new Date(date).getTime();
+  const min = Math.floor(diff / 60000);
+  const h = Math.floor(diff / 3600000);
+  const d = Math.floor(diff / 86400000);
+  const sem = Math.floor(d / 7);
+  if (min < 60) return `${min} min atrás`;
+  if (h < 24) return `${h}h atrás`;
+  if (d < 7) return `${d} dia${d > 1 ? "s" : ""} atrás`;
+  return `${sem} semana${sem > 1 ? "s" : ""} atrás`;
+}
+
 export default function Perfil() {
   const [usuario, setUsuario] = useState(null);
   const [seguidores, setSeguidores] = useState(0);
   const [seguindo, setSeguindo] = useState(0);
+  const [totalFilmes, setTotalFilmes] = useState(0);
+  const [totalReviews, setTotalReviews] = useState(0);
+  const [filmesFavoritos, setFilmesFavoritos] = useState([]);
+  const [reviewsRecentes, setReviewsRecentes] = useState([]);
+  const [atividade, setAtividade] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const router = useRouter();
 
@@ -127,19 +128,93 @@ export default function Perfil() {
     async function carregar() {
       try {
         const user = Parse.User.current();
-        if (user) {
-          setUsuario(user);
+        if (!user) { setCarregando(false); return; }
+        setUsuario(user);
 
-          const qSeguidores = new Parse.Query("Follow");
-          qSeguidores.equalTo("seguindo", user);
-          const totalSeguidores = await qSeguidores.count();
-          setSeguidores(totalSeguidores);
+        const qSeg = new Parse.Query("Follow");
+        qSeg.equalTo("seguindo", user);
+        const qSeguindo = new Parse.Query("Follow");
+        qSeguindo.equalTo("seguidor", user);
+        const [nSeg, nSeguindo] = await Promise.all([qSeg.count(), qSeguindo.count()]);
+        setSeguidores(nSeg);
+        setSeguindo(nSeguindo);
 
-          const qSeguindo = new Parse.Query("Follow");
-          qSeguindo.equalTo("seguidor", user);
-          const totalSeguindo = await qSeguindo.count();
-          setSeguindo(totalSeguindo);
+        const tmdbIds = user.get("favoritos") || [];
+        if (tmdbIds.length > 0) {
+          const res = await Promise.allSettled(tmdbIds.map((id) => getFilme(id)));
+          setFilmesFavoritos(res.filter((r) => r.status === "fulfilled" && r.value).map((r) => r.value));
         }
+
+        const qLogs = new Parse.Query("Log");
+        qLogs.equalTo("usuarioId", user);
+        qLogs.descending("createdAt");
+        qLogs.limit(20);
+        const logs = await qLogs.find();
+
+        setTotalFilmes(logs.length);
+
+        const logsComReview = logs.filter((l) => l.get("review"));
+        setTotalReviews(logsComReview.length);
+
+        const top3Reviews = logsComReview.slice(0, 3);
+        const reviewsDetalhes = await Promise.allSettled(
+          top3Reviews.map(async (r) => {
+            const filme = await getFilme(r.get("filmeId"));
+            return {
+              titulo: filme?.title || "Filme",
+              poster_path: filme?.poster_path || null,
+              estatuetas: r.get("estatuetas") || 0,
+              like: r.get("like") || false,
+              review: r.get("review"),
+              data: tempoRelativo(r.createdAt),
+            };
+          })
+        );
+        setReviewsRecentes(
+          reviewsDetalhes.filter((r) => r.status === "fulfilled").map((r) => r.value)
+        );
+
+        const atividadeItems = [];
+
+        const top5Logs = logs.slice(0, 5);
+        const logsAtividade = await Promise.allSettled(
+          top5Logs.map(async (l) => {
+            const filme = await getFilme(l.get("filmeId"));
+            const temReview = !!l.get("review");
+            return {
+              tipo: temReview ? "review" : "log",
+              texto: temReview
+                ? `escreveu uma review de "${filme?.title || "filme"}"`
+                : `registrou "${filme?.title || "filme"}"`,
+              data: tempoRelativo(l.createdAt),
+              createdAt: l.createdAt,
+            };
+          })
+        );
+        logsAtividade
+          .filter((r) => r.status === "fulfilled")
+          .forEach((r) => atividadeItems.push(r.value));
+
+        const qFollows = new Parse.Query("Follow");
+        qFollows.equalTo("seguidor", user);
+        qFollows.descending("createdAt");
+        qFollows.limit(3);
+        qFollows.include("seguindo");
+        const follows = await qFollows.find();
+        follows.forEach((f) => {
+          const seguindoUser = f.get("seguindo");
+          const nomeAlvo = seguindoUser?.get("nome") || seguindoUser?.get("username") || "alguém";
+          atividadeItems.push({
+            tipo: "seguindo",
+            texto: `começou a seguir ${nomeAlvo}`,
+            data: tempoRelativo(f.createdAt),
+            createdAt: f.createdAt,
+          });
+        });
+
+        atividadeItems.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setAtividade(atividadeItems.slice(0, 5));
+
       } catch (e) {
         console.error(e);
       } finally {
@@ -161,21 +236,24 @@ export default function Perfil() {
   const nome = usuario?.get("nome") || usuario?.get("username") || "Usuário";
   const bio = usuario?.get("bio") || "Cinéfilo apaixonado por Oscar.";
   const foto = usuario?.get("foto")?._url || null;
+  const bannerUrl = usuario?.get("banner")?._url || null;
 
   return (
     <main className={styles.principal}>
       <NavbarLogin usuario={{ nome, foto }} />
 
       <div className={styles.bannerWrap}>
-        <div className={styles.banner} />
+        {bannerUrl ? (
+          <img src={bannerUrl} alt="Banner" className={styles.bannerImg} />
+        ) : (
+          <div className={styles.banner} />
+        )}
         <div className={styles.headerPerfil}>
           <div className={styles.avatarWrap}>
             {foto ? (
               <img src={foto} alt={nome} className={styles.avatar} />
             ) : (
-              <div className={styles.avatarPlaceholder}>
-                {nome[0]?.toUpperCase()}
-              </div>
+              <div className={styles.avatarPlaceholder}>{nome[0]?.toUpperCase()}</div>
             )}
           </div>
           <div className={styles.headerInfo}>
@@ -189,11 +267,10 @@ export default function Perfil() {
       </div>
 
       <div className={styles.estatRow}>
-        <EstatCard valor="24" label="filmes avaliados" />
-        <EstatCard valor="8" label="reviews" />
+        <EstatCard valor={totalFilmes} label="filmes registrados" />
+        <EstatCard valor={totalReviews} label="reviews" />
         <EstatCard valor={seguidores} label="seguidores" />
         <EstatCard valor={seguindo} label="seguindo" />
-        <EstatCard valor="12" label="watchlist" />
       </div>
 
       <TabsPerfil ativa="perfil" />
@@ -202,31 +279,43 @@ export default function Perfil() {
         <div className={styles.colunaEsq}>
           <section className={styles.secao}>
             <h2 className={styles.tituloSecao}>filmes favoritos</h2>
-            <div className={styles.gradeFilmesFav}>
-              {FILMES_FAVORITOS.map((f) => (
-                <FilmeFavorito key={f.id} filme={f} />
-              ))}
-            </div>
+            {filmesFavoritos.length > 0 ? (
+              <div className={styles.gradeFilmesFav}>
+                {filmesFavoritos.map((f) => (
+                  <FilmeFavorito key={f.id} filme={f} />
+                ))}
+              </div>
+            ) : (
+              <p className={styles.vazio}>Nenhum filme favorito ainda.</p>
+            )}
           </section>
 
           <section className={styles.secao}>
             <h2 className={styles.tituloSecao}>reviews recentes</h2>
-            <div className={styles.listaReviews}>
-              {REVIEWS_RECENTES.map((r, i) => (
-                <ReviewCard key={i} review={r} />
-              ))}
-            </div>
+            {reviewsRecentes.length > 0 ? (
+              <div className={styles.listaReviews}>
+                {reviewsRecentes.map((r, i) => (
+                  <ReviewCard key={i} review={r} />
+                ))}
+              </div>
+            ) : (
+              <p className={styles.vazio}>Nenhuma review ainda.</p>
+            )}
           </section>
         </div>
 
         <aside className={styles.sidebar}>
           <section className={styles.secao}>
             <h2 className={styles.tituloSecao}>atividade recente</h2>
-            <div className={styles.listaAtividade}>
-              {ATIVIDADE_RECENTE.map((a, i) => (
-                <AtividadeItem key={i} item={a} />
-              ))}
-            </div>
+            {atividade.length > 0 ? (
+              <div className={styles.listaAtividade}>
+                {atividade.map((a, i) => (
+                  <AtividadeItem key={i} item={a} />
+                ))}
+              </div>
+            ) : (
+              <p className={styles.vazio}>Nenhuma atividade ainda.</p>
+            )}
           </section>
         </aside>
       </div>

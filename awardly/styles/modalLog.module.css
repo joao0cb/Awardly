@@ -1,0 +1,466 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(5px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal {
+  width: 100%;
+  max-width: 480px;
+  background: #0f0e0b;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  animation: subir 0.22s ease;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes subir {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Header ── */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #1a1610 0%, #0f0e0b 100%);
+}
+
+.headerEsq {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerLabel {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text);
+  letter-spacing: 0.04em;
+}
+
+.btnVoltar {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.4);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.btnVoltar:hover {
+  color: var(--gold);
+}
+
+.btnFechar {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.3);
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.btnFechar:hover {
+  color: var(--text);
+}
+
+/* ── Etapa Busca ── */
+
+.etapaBusca {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+}
+
+.buscaWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.buscaIcone {
+  width: 16px;
+  height: 16px;
+  color: rgba(255,255,255,0.3);
+  flex-shrink: 0;
+}
+
+.inputBusca {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: var(--text);
+  font-family: inherit;
+}
+
+.inputBusca::placeholder {
+  color: rgba(255,255,255,0.2);
+}
+
+.resultados {
+  overflow-y: auto;
+  max-height: 360px;
+  flex: 1;
+}
+
+.msg {
+  padding: 24px 20px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.3);
+  font-style: italic;
+  text-align: center;
+}
+
+.msgDica {
+  padding: 32px 20px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.2);
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+}
+
+.resultadoItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.resultadoItem:last-child { border-bottom: none; }
+
+.resultadoItem:hover {
+  background: rgba(201, 168, 76, 0.05);
+}
+
+.resultadoInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.resultadoNome {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.resultadoAno {
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+}
+
+.resultadoSeta {
+  color: rgba(201, 168, 76, 0.4);
+  font-size: 16px;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.resultadoItem:hover .resultadoSeta {
+  color: var(--gold);
+  transform: translateX(3px);
+}
+
+/* ── Etapa Log ── */
+
+.etapaLog {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Filme info */
+.filmeInfo {
+  display: flex;
+  gap: 14px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.filmePoster {
+  width: 64px;
+  flex-shrink: 0;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+}
+
+.filmeSemPoster {
+  width: 64px;
+  flex-shrink: 0;
+  aspect-ratio: 2/3;
+  background: var(--card-bg);
+  border-radius: 2px;
+  border: 1px solid var(--border);
+}
+
+.filmeTexto {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.filmeNome {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.filmeAno {
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+}
+
+.filmeSinopse {
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+/* Campos */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+
+.opcional {
+  font-size: 10px;
+  text-transform: none;
+  letter-spacing: 0;
+  color: rgba(255,255,255,0.25);
+  font-style: italic;
+}
+
+/* Data */
+.inputData {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  width: fit-content;
+  color-scheme: dark;
+}
+
+.inputData:focus {
+  border-color: var(--gold);
+}
+
+/* Avaliação row */
+.avaliacaoRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+/* Estatuetas */
+.estatuetasWrap {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.estatuetaSlot {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.estatuetaMeia {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+
+.estatuetaImg {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  transition: transform 0.1s ease;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+}
+
+.estatuetaFundo {
+  opacity: 0.3;
+}
+
+.estatuetaSlot:hover .estatuetaImg {
+  transform: scale(1.1);
+}
+
+.estatuetasValor {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+  color: var(--gold);
+  margin-left: 6px;
+  font-weight: 600;
+}
+
+/* Like */
+.btnLike {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  color: rgba(255,255,255,0.4);
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.btnLike:hover {
+  border-color: rgba(201, 168, 76, 0.4);
+  color: rgba(255,255,255,0.7);
+}
+
+.btnLikeAtivo {
+  border-color: var(--gold);
+  background: rgba(201, 168, 76, 0.08);
+  color: var(--gold);
+}
+
+.envelopeImg {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+/* Textarea */
+.textarea {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+  resize: none;
+  line-height: 1.6;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.textarea:focus {
+  border-color: var(--gold);
+}
+
+.textarea::placeholder {
+  color: rgba(255,255,255,0.2);
+}
+
+.contador {
+  font-size: 11px;
+  color: rgba(255,255,255,0.2);
+  text-align: right;
+}
+
+/* Erro */
+.erro {
+  font-size: 12px;
+  color: #e07b7b;
+  background: rgba(224,123,123,0.08);
+  border: 1px solid rgba(224,123,123,0.2);
+  border-radius: 2px;
+  padding: 8px 12px;
+}
+
+/* Botão salvar */
+.btnSalvar {
+  width: 100%;
+  padding: 12px;
+  background: var(--gold);
+  border: none;
+  border-radius: 2px;
+  color: #0a0906;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.btnSalvar:hover:not(:disabled) {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.btnSalvar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 560px) {
+  .modal { max-height: 95vh; }
+  .avaliacaoRow { flex-direction: column; gap: 16px; }
+}

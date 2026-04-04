@@ -614,3 +614,92 @@
     font-size: 22px;
   }
 }
+
+.conteudoFullHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+ 
+.conteudoCount {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.06em;
+}
+ 
+/* Vazio com dica */
+.vazioWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 60px 0;
+}
+ 
+.vazioDica {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.2);
+  font-style: italic;
+}
+ 
+/* Like no card de filme */
+.cardFilmeLike {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8));
+}
+ 
+/* Estatuetas mini (na grade de filmes e reviews) */
+.estatuetasRow {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+ 
+.estatuetaMiniSlot {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+ 
+.estatuetaMini {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+ 
+.estatuetaMiniValor {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 12px;
+  color: var(--gold);
+  margin-left: 4px;
+  font-weight: 600;
+}
+ 
+/* Review — envelope e ações */
+.reviewAcoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+ 
+.reviewEnvelope {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.bannerImg {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}

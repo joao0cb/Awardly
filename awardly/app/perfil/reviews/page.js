@@ -6,11 +6,39 @@ import NavbarLogin from "../../components/NavbarLogin";
 import TabsPerfil from "../../components/TabsPerfil";
 import styles from "@/styles/perfil.module.css";
 import { getFilme, getImageURL } from "@/lib/tmdb";
+import { useRouter } from "next/navigation";
+
+function Estatuetas({ valor }) {
+  return (
+    <div className={styles.estatuetasRow}>
+      {[1, 2, 3, 4, 5].map((i) => {
+        const cheia = valor >= i;
+        const meia = !cheia && valor >= i - 0.5;
+        return (
+          <div key={i} className={styles.estatuetaMiniSlot}>
+            {cheia ? (
+              <img src="/oscar2.png" className={styles.estatuetaMini} />
+            ) : meia ? (
+              <div style={{ position: "relative", width: 16, height: 16 }}>
+                <img src="/oscar2.png" className={styles.estatuetaMini} style={{ clipPath: "inset(0 50% 0 0)", position: "absolute" }} />
+                <img src="/oscarvazio.png" className={styles.estatuetaMini} style={{ clipPath: "inset(0 0 0 50%)", position: "absolute", opacity: 0.3 }} />
+              </div>
+            ) : (
+              <img src="/oscarvazio.png" className={styles.estatuetaMini} style={{ opacity: 0.3 }} />
+            )}
+          </div>
+        );
+      })}
+      {valor > 0 && <span className={styles.estatuetaMiniValor}>{valor}</span>}
+    </div>
+  );
+}
 
 export default function PerfilReviews() {
   const [reviews, setReviews] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [usuario, setUsuario] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     async function carregar() {
@@ -19,8 +47,9 @@ export default function PerfilReviews() {
       if (!user) { setCarregando(false); return; }
 
       try {
-        const query = new Parse.Query("Review");
+        const query = new Parse.Query("Log");
         query.equalTo("usuarioId", user);
+        query.exists("review");
         query.descending("createdAt");
         const resultados = await query.find();
 
@@ -29,10 +58,10 @@ export default function PerfilReviews() {
             const filme = await getFilme(r.get("filmeId"));
             return {
               filme,
-              nota: r.get("nota"),
-              texto: r.get("texto"),
-              categoria: r.get("categoria"),
-              oscarAno: r.get("oscarAno"),
+              estatuetas: r.get("estatuetas") || 0,
+              like: r.get("like") || false,
+              review: r.get("review"),
+              dataAssistido: r.get("dataAssistido"),
               data: r.createdAt?.toLocaleDateString("pt-BR"),
               id: r.id,
             };
@@ -41,7 +70,7 @@ export default function PerfilReviews() {
 
         setReviews(
           comDetalhes
-            .filter((r) => r.status === "fulfilled")
+            .filter((r) => r.status === "fulfilled" && r.value.filme)
             .map((r) => r.value)
         );
       } catch (e) {
@@ -73,16 +102,19 @@ export default function PerfilReviews() {
           <div className={styles.headerInfo}>
             <h1 className={styles.nomeUsuario}>{nome}</h1>
           </div>
-          <button className={styles.btnEditar}>Editar perfil</button>
+          <button className={styles.btnEditar} onClick={() => router.push("/editarPerfil")}>
+            Editar perfil
+          </button>
         </div>
       </div>
 
       <TabsPerfil />
 
       <div className={styles.conteudoFull}>
-        <h2 className={styles.tituloSecao} style={{ marginBottom: 24 }}>
-          todas as reviews
-        </h2>
+        <div className={styles.conteudoFullHeader}>
+          <h2 className={styles.tituloSecao}>todas as reviews</h2>
+          {!carregando && <span className={styles.conteudoCount}>{reviews.length} reviews</span>}
+        </div>
 
         {carregando ? (
           <div className={styles.listaReviews}>
@@ -91,10 +123,13 @@ export default function PerfilReviews() {
             ))}
           </div>
         ) : reviews.length === 0 ? (
-          <p className={styles.vazio}>Você ainda não escreveu nenhuma review.</p>
+          <div className={styles.vazioWrap}>
+            <p className={styles.vazio}>Você ainda não escreveu nenhuma review.</p>
+            <p className={styles.vazioDica}>Ao registrar um filme, adicione um texto de review.</p>
+          </div>
         ) : (
           <div className={styles.listaReviews}>
-            {reviews.map(({ filme, nota, texto, categoria, oscarAno, data, id }) => (
+            {reviews.map(({ filme, estatuetas, like, review, data, id }) => (
               <div key={id} className={styles.reviewCard}>
                 <img
                   src={getImageURL(filme.poster_path, "w185")}
@@ -104,12 +139,14 @@ export default function PerfilReviews() {
                 <div className={styles.reviewBody}>
                   <div className={styles.reviewHeader}>
                     <span className={styles.reviewFilme}>{filme.title}</span>
-                    <span className={styles.reviewNota}>{nota}</span>
+                    <div className={styles.reviewAcoes}>
+                      {like && (
+                        <img src="/envelopecoracao.png" className={styles.reviewEnvelope} alt="gostei" />
+                      )}
+                    </div>
                   </div>
-                  <span className={styles.reviewCategoria}>
-                    Oscar {oscarAno} · {categoria}
-                  </span>
-                  <p className={styles.reviewTexto}>{texto}</p>
+                  {estatuetas > 0 && <Estatuetas valor={estatuetas} />}
+                  <p className={styles.reviewTexto}>{review}</p>
                   <span className={styles.reviewData}>{data}</span>
                 </div>
               </div>

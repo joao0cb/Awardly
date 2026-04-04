@@ -300,3 +300,82 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.sublabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.25);
+  margin-top: -4px;
+  margin-bottom: 4px;
+}
+
+.bannerWrap {
+  width: 100%;
+  height: 140px;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  border: 1px dashed rgba(201, 168, 76, 0.3);
+  transition: border-color 0.2s ease;
+}
+ 
+.bannerWrap:hover {
+  border-color: var(--gold);
+}
+ 
+.bannerPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+ 
+.bannerPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--card-bg);
+}
+ 
+.bannerMais {
+  font-size: 28px;
+  color: rgba(201, 168, 76, 0.4);
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+ 
+.bannerWrap:hover .bannerMais {
+  color: var(--gold);
+}
+ 
+.bannerLabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.06em;
+}
+ 
+.bannerOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+ 
+.bannerWrap:hover .bannerOverlay {
+  opacity: 1;
+}
+ 
+.bannerOverlay span {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
