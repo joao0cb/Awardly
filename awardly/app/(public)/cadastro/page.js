@@ -4,7 +4,7 @@ import { useState } from "react";
 import Parse from '@/lib/parseClient';
 import { useRouter } from "next/navigation";
 import styles from "@/styles/cadastro.module.css";
-import DarkVeil from "../components/DarkVeil";
+import DarkVeil from "../../components/DarkVeil";
 
 export default function Cadastro() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });

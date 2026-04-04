@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Parse from '@/lib/parseClient';
-import { getFilme, getFilmeCreditos, getFilmeImagens, getImageURL } from '../../../lib/tmdb';
-import NavbarLogin from '../../components/NavbarLogin';
+import { getFilme, getFilmeCreditos, getFilmeImagens, getImageURL } from '../../../../lib/tmdb';
+import NavbarLogin from '../../../components/NavbarLogin';
 import '@/styles/filmeUnico.css';
 
 async function verificarWatchlist(tmdbId) {

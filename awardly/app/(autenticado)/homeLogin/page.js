@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getFilme, getImageURL } from "@/lib/tmdb";
-import NavbarLogin from "../components/NavbarLogin";
+import NavbarLogin from "../../components/NavbarLogin";
 import styles from "@/styles/homeLogin.module.css";
 
 const INDICADOS_2026 = [

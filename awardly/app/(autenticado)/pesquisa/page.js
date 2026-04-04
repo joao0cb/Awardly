@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Parse from "@/lib/parseClient";
-import NavbarLogin from "../components/NavbarLogin";
+import NavbarLogin from "../../components/NavbarLogin";
 import styles from "@/styles/pesquisa.module.css";
 import { getFilme, getImageURL } from "@/lib/tmdb";
 

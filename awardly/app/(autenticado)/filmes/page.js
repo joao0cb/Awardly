@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useFilmes } from '../../hooks/useFilmes';
+import { useFilmes } from '../../../hooks/useFilmes';
 import FilmeCard from '@/app/components/FilmeCard';
 import '@/styles/filmes.css';
 

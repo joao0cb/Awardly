@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useFilmes } from '../../hooks/useFilmes';
+import { useFilmes } from '../../../hooks/useFilmes';
 import FilmeCard from '@/app/components/FilmeCard';
 import '@/styles/categorias.css';
-import NavbarLogin from '../components/NavbarLogin';
+import NavbarLogin from '../../components/NavbarLogin';
 import Parse from '@/lib/parseClient';
 
 const ANOS = [2023, 2024, 2025, 2026];

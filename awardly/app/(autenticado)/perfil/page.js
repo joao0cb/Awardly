@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Parse from "@/lib/parseClient";
-import NavbarLogin from "../components/NavbarLogin";
-import TabsPerfil from "../components/TabsPerfil";
+import NavbarLogin from "../../components/NavbarLogin";
+import TabsPerfil from "../../components/TabsPerfil";
 import styles from "@/styles/perfil.module.css";
 import { getFilme, getImageURL } from "@/lib/tmdb";
 import { useRouter } from "next/navigation";

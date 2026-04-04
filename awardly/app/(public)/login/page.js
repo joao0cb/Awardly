@@ -4,11 +4,12 @@ import { useState } from "react";
 import Parse from '@/lib/parseClient';
 import { useRouter } from "next/navigation";
 import styles from "@/styles/login.module.css";
-import DarkVeil from "../components/DarkVeil";
+import DarkVeil from "@/app/components/DarkVeil";
 
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [lembrar, setLembrar] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [showReset, setShowReset] = useState(false);
   const [message, setMessage] = useState("");
@@ -22,9 +23,22 @@ export default function Login() {
     e.preventDefault();
     setMessage("");
     try {
-      await Parse.User.logIn(form.username, form.password);
-      setMessage("Login realizado com sucesso!");
-      router.push("/homeLogin");
+      const user = await Parse.User.logIn(form.username, form.password);
+      const sessionToken = user.getSessionToken();
+
+      document.cookie = `awardly_session=${sessionToken}; path=/`;
+
+      if (lembrar) {
+        const expira = new Date();
+        expira.setDate(expira.getDate() + 30);
+        document.cookie = `awardly_lembrar=true; expires=${expira.toUTCString()}; path=/`;
+      } else {
+        document.cookie = 'awardly_lembrar=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+      }
+
+      setTimeout(() => {
+        window.location.href = '/homeLogin';
+      }, 200);
     } catch (error) {
       setMessage(error.message);
     }
@@ -75,6 +89,16 @@ export default function Login() {
               />
             </button>
           </div>
+
+          <label className={styles.lembrar}>
+            <input
+              type="checkbox"
+              checked={lembrar}
+              onChange={(e) => setLembrar(e.target.checked)}
+            />
+            Lembrar de mim
+          </label>
+
           <button type="submit" className={styles.btnPrimary}>Entrar</button>
         </form>
 

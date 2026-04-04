@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useRef } from "react";
 import Parse from "@/lib/parseClient";
-import NavbarLogin from "../components/NavbarLogin";
-import FilmesFavoritos from "../components/FilmesFavoritos";
+import NavbarLogin from "../../components/NavbarLogin";
+import FilmesFavoritos from "../../components/FilmesFavoritos";
 import { useRouter } from "next/navigation";
 import { getFilme } from "@/lib/tmdb";
 import styles from "@/styles/editarPerfil.module.css";
