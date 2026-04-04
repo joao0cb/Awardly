@@ -19,7 +19,7 @@
   display: flex;
   align-items: flex-end;
   gap: 40px;
-  padding: 48px;
+  padding: 48px max(24px, calc((100% - 1200px) / 2));
 }
 
 .filme-poster {
@@ -28,6 +28,15 @@
   border-radius: 4px;
   border: 1px solid var(--border, rgba(255,200,0,0.2));
   box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  flex-shrink: 0;
+}
+
+.filme-hero-conteudo {
+  display: flex;
+  align-items: flex-end;
+  gap: 32px;
+  flex: 1;
+  min-width: 0;
 }
 
 .filme-hero-info {
@@ -35,6 +44,7 @@
   flex-direction: column;
   gap: 10px;
   padding-bottom: 4px;
+  min-width: 0;
 }
 
 .filme-hero-info h1 {
@@ -84,6 +94,7 @@
   display: flex;
   gap: 10px;
   margin-top: 4px;
+  flex-wrap: wrap;
 }
 
 .acoes button {
@@ -105,18 +116,21 @@
   color: var(--gold, #FFD000);
 }
 
-/* Sinopse */
+/* Seções */
+.filme-categorias-oscar,
 .filme-sinopse,
+.filme-elenco,
 .filme-trailer,
-.filme-elenco {
+.filme-imagens {
   max-width: 1200px;
   margin: 0 auto;
   padding: 48px 48px 0;
 }
 
 .filme-sinopse h2,
+.filme-elenco h2,
 .filme-trailer h2,
-.filme-elenco h2 {
+.filme-imagens h2 {
   font-family: 'Cormorant Garamond', serif;
   font-size: 24px;
   font-weight: 300;
@@ -134,32 +148,105 @@
   max-width: 720px;
 }
 
+/* Categorias Oscar */
+.categorias-oscar-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.categoria-oscar-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255,200,0,0.25);
+  border-radius: 2px;
+  color: rgba(255,255,255,0.6);
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  padding: 5px 10px;
+  text-transform: uppercase;
+}
+
+.categoria-oscar-vencedor {
+  border-color: var(--gold, #FFD000);
+  color: var(--gold, #FFD000);
+  background: rgba(255,208,0,0.06);
+}
+
+.categoria-oscar-icone {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+
 /* Trailer */
 .filme-trailer iframe {
   border-radius: 4px;
   border: 1px solid var(--border, rgba(255,200,0,0.15));
+  width: 100%;
+  height: 500px;
 }
+
+/* Carrossel */
+.carrossel-wrapper {
+  position: relative;
+}
+
+.carrossel {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+
+.carrossel::-webkit-scrollbar { display: none; }
+
+.carrossel-btn {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  background: rgba(10,10,10,0.85);
+  border: 1px solid rgba(255,200,0,0.3);
+  border-radius: 50%;
+  color: var(--gold, #FFD000);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  font-size: 18px;
+  transition: background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.carrossel-btn:hover {
+  background: rgba(255,200,0,0.15);
+  border-color: var(--gold, #FFD000);
+}
+
+.carrossel-btn-esq { left: -18px; }
+.carrossel-btn-dir { right: -18px; }
 
 /* Elenco */
-.elenco-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 14px;
-  padding-bottom: 64px;
-}
-
 .ator-card {
   cursor: pointer;
   text-align: center;
   transition: transform 0.2s;
+  min-width: 120px;
+  flex-shrink: 0;
 }
 
-.ator-card:hover {
-  transform: translateY(-4px);
-}
+.ator-card:hover { transform: translateY(-4px); }
 
 .ator-card img {
-  width: 100%;
+  width: 120px;
   aspect-ratio: 2/3;
   object-fit: cover;
   border-radius: 4px;
@@ -182,69 +269,113 @@
   color: rgba(255,255,255,0.45);
 }
 
-@media (max-width: 900px) {
-  .filme-hero {
-    height: auto;
-  }
-
-  .filme-hero-overlay {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 24px;
-    gap: 20px;
-  }
-
-  .filme-poster {
-    width: 120px;
-    min-width: 120px;
-  }
-
-  .filme-hero-info h1 {
-    font-size: 28px;
-  }
-
-  .filme-sinopse,
-  .filme-trailer,
-  .filme-elenco {
-    padding: 32px 24px 0;
-  }
-
-  .elenco-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+/* Imagens */
+.imagem-card {
+  min-width: 420px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border, rgba(255,200,0,0.15));
+  cursor: pointer;
 }
 
+.imagem-card img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  display: block;
+}
+
+.imagem-card:hover img {
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  animation: fadeIn 0.2s ease;
+}
+
+.lightbox img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 4px;
+  cursor: default;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.8);
+}
+
+.lightbox-fechar {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.lightbox-fechar:hover {
+  border-color: var(--gold, #FFD000);
+  color: var(--gold, #FFD000);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.filme-imagens {
+  padding-bottom: 64px !important;
+}
+
+/* Estados */
 .btn-watchlist-ativo {
   border-color: var(--gold, #FFD000) !important;
   color: var(--gold, #FFD000) !important;
-  background: rgba(255, 208, 0, 0.08) !important;
-}
- 
-.filme-loading {
-  width: 100%;
-  height: 560px;
-  background: linear-gradient(135deg, #1a1814 0%, #232018 50%, #1a1814 100%);
-  animation: loadPulse 1.8s infinite;
-}
- 
-@keyframes loadPulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+  background: rgba(255,208,0,0.08) !important;
 }
 
 .btn-ativo {
   border-color: var(--gold, #FFD000) !important;
   color: var(--gold, #FFD000) !important;
 }
- 
-/* Painel de log inline */
+
+.filme-loading {
+  width: 100%;
+  height: 560px;
+  background: linear-gradient(135deg, #1a1814 0%, #232018 50%, #1a1814 100%);
+  animation: loadPulse 1.8s infinite;
+}
+
+@keyframes loadPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Log painel */
 .log-painel {
-  margin-top: 0;           /* remove margem de cima */
-  min-width: 300px;
-  max-width: 340px;
+  margin-top: 0;
+  min-width: 280px;
+  max-width: 320px;
   padding: 16px;
-  background: rgba(10, 9, 6, 0.88);
-  border: 1px solid rgba(201, 168, 76, 0.25);
+  background: rgba(10,9,6,0.88);
+  border: 1px solid rgba(201,168,76,0.25);
   border-radius: 4px;
   backdrop-filter: blur(10px);
   display: flex;
@@ -252,45 +383,39 @@
   gap: 14px;
   animation: logEntrar 0.22s ease;
   align-self: flex-end;
+  flex-shrink: 0;
 }
 
-.filme-hero-conteudo {
-  display: flex;
-  align-items: flex-end;
-  gap: 32px;
-  flex: 1;
-}
- 
 @keyframes logEntrar {
   from { opacity: 0; transform: translateX(-16px); }
   to   { opacity: 1; transform: translateX(0); }
 }
- 
+
 .log-painel-salvo {
   align-items: center;
   justify-content: center;
   min-height: 60px;
 }
- 
+
 .log-salvo-texto {
   font-family: 'Cormorant Garamond', serif;
   font-size: 18px;
   color: var(--gold, #FFD000);
   letter-spacing: 0.08em;
 }
- 
+
 .log-painel-linha {
   display: flex;
   gap: 20px;
   align-items: flex-end;
 }
- 
+
 .log-campo {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
- 
+
 .log-label {
   font-family: 'Cormorant Garamond', serif;
   font-size: 11px;
@@ -298,7 +423,7 @@
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.4);
 }
- 
+
 .log-opcional {
   font-size: 10px;
   text-transform: none;
@@ -306,8 +431,7 @@
   color: rgba(255, 255, 255, 0.25);
   font-style: italic;
 }
- 
-/* Data */
+
 .log-input-data {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -321,12 +445,11 @@
   transition: border-color 0.2s ease;
   color-scheme: dark;
 }
- 
+
 .log-input-data:focus {
   border-color: rgba(201, 168, 76, 0.6);
 }
- 
-/* Like */
+
 .log-btn-like {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -337,23 +460,22 @@
   display: flex;
   align-items: center;
 }
- 
+
 .log-btn-like:hover {
   border-color: rgba(201, 168, 76, 0.5);
 }
- 
+
 .log-btn-like-ativo {
   border-color: var(--gold, #FFD000) !important;
   background: rgba(201, 168, 76, 0.1) !important;
 }
- 
+
 .log-envelope {
   width: 22px;
   height: 22px;
   object-fit: contain;
 }
- 
-/* Estatuetas */
+
 .log-estatuetas {
   display: flex;
   align-items: center;
@@ -361,7 +483,7 @@
   cursor: pointer;
   user-select: none;
 }
- 
+
 .log-estatueta-slot {
   width: 30px;
   height: 30px;
@@ -370,18 +492,18 @@
   justify-content: center;
   position: relative;
 }
- 
+
 .log-estatueta-img {
   width: 26px;
   height: 26px;
   object-fit: contain;
   transition: transform 0.1s ease;
 }
- 
+
 .log-estatueta-slot:hover .log-estatueta-img {
   transform: scale(1.12);
 }
- 
+
 .log-estatuetas-valor {
   font-family: 'Cormorant Garamond', serif;
   font-size: 14px;
@@ -389,8 +511,7 @@
   font-weight: 600;
   margin-left: 6px;
 }
- 
-/* Textarea */
+
 .log-textarea {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -406,16 +527,15 @@
   width: 100%;
   box-sizing: border-box;
 }
- 
+
 .log-textarea:focus {
   border-color: rgba(201, 168, 76, 0.6);
 }
- 
+
 .log-textarea::placeholder {
   color: rgba(255, 255, 255, 0.2);
 }
- 
-/* Erro */
+
 .log-erro {
   font-size: 12px;
   color: #e07b7b;
@@ -424,14 +544,13 @@
   border-radius: 2px;
   padding: 6px 10px;
 }
- 
-/* Ações */
+
 .log-acoes {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
 }
- 
+
 .log-btn-cancelar {
   padding: 7px 16px;
   background: transparent;
@@ -444,12 +563,12 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
- 
+
 .log-btn-cancelar:hover {
   color: var(--text, #fff);
   border-color: rgba(255, 255, 255, 0.3);
 }
- 
+
 .log-btn-salvar {
   padding: 7px 20px;
   background: var(--gold, #FFD000);
@@ -463,18 +582,91 @@
   cursor: pointer;
   transition: opacity 0.2s ease;
 }
- 
+
 .log-btn-salvar:hover:not(:disabled) {
   opacity: 0.88;
 }
- 
+
 .log-btn-salvar:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-@media (max-width: 560px) {
-  .elenco-grid {
-    grid-template-columns: repeat(2, 1fr);
+.filme-categorias-oscar h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--gold, #FFD000);
+  margin-bottom: 16px;
+  letter-spacing: 0.01em;
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+  .filme-hero { height: auto; min-height: 400px; }
+
+  .filme-hero-overlay {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px;
+    gap: 20px;
+    position: relative;
+    background: linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.5) 100%);
   }
+
+  .filme-poster { width: 110px; min-width: 110px; }
+  .filme-hero-info h1 { font-size: 26px; }
+
+  .filme-hero-conteudo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .log-painel {
+    min-width: unset;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .filme-categorias-oscar,
+  .filme-sinopse,
+  .filme-elenco,
+  .filme-trailer,
+  .filme-imagens {
+    padding: 32px 20px 0;
+  }
+
+  .filme-trailer iframe { height: 240px; }
+
+  .imagem-card { min-width: 240px; }
+  .imagem-card img { height: 135px; }
+
+  .carrossel-btn-esq { left: 0; }
+  .carrossel-btn-dir { right: 0; }
+}
+
+@media (max-width: 560px) {
+  .filme-hero-overlay { padding: 16px; }
+  .filme-poster { width: 90px; min-width: 90px; }
+  .filme-hero-info h1 { font-size: 22px; }
+
+  .filme-categorias-oscar,
+  .filme-sinopse,
+  .filme-elenco,
+  .filme-trailer,
+  .filme-imagens {
+    padding: 24px 16px 0;
+  }
+
+  .ator-card { min-width: 90px; }
+  .ator-card img { width: 90px; }
+
+  .imagem-card { min-width: 200px; }
+  .imagem-card img { height: 112px; }
+
+  .acoes { flex-direction: column; }
+  .acoes button { width: 100%; text-align: center; }
 }

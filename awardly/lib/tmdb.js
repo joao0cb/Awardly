@@ -7,7 +7,7 @@ async function fetchTMDB(endpoint, params = {}) {
     url.searchParams.set('language', 'pt-BR');
 
     Object.entries(params).forEach(([key, val]) => {
-    url.searchParams.set(key, val);
+        url.searchParams.set(key, val);
     });
 
     const res = await fetch(url);
@@ -17,7 +17,10 @@ async function fetchTMDB(endpoint, params = {}) {
 
 export const getFilme         = (id) => fetchTMDB(`/movie/${id}`);
 export const getFilmeCreditos = (id) => fetchTMDB(`/movie/${id}/credits`);
-export const getFilmeImagens  = (id) => fetchTMDB(`/movie/${id}/images`);
+export const getFilmeImagens  = (id) => fetchTMDB(`/movie/${id}/images`, {
+    include_image_language: 'en,null',
+});
+
 export const getPessoa        = (id) => fetchTMDB(`/person/${id}`);
 
 // tamanhos úteis: w185, w342, w500, w780, original
