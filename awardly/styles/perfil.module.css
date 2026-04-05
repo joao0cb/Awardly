@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 /* ===================== LAYOUT ===================== */
 
 .principal {
@@ -105,7 +106,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 38px;
   font-weight: 600;
   color: var(--gold);
@@ -118,7 +119,7 @@
 }
 
 .nomeUsuario {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 28px;
   font-weight: 600;
   color: var(--text);
@@ -130,6 +131,7 @@
   font-size: 13px;
   color: rgba(255, 255, 255, 0.5);
   line-height: 1.5;
+  font-family: 'Poppins', sans-serif;
 }
 
 .btnEditar {
@@ -139,7 +141,7 @@
   border-radius: 2px;
   background: transparent;
   color: var(--gold);
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 13px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -160,7 +162,7 @@
   border-radius: 2px;
   background: transparent;
   color: var(--gold);
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 13px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -217,6 +219,7 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: rgba(255, 255, 255, 0.4);
+  text-align: center; /* ← adiciona isso */
 }
 
 /* ===================== TABS ===================== */
@@ -228,12 +231,12 @@
   display: flex;
   gap: 0;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 0;
+  justify-content: center; /* ← adiciona isso */
 }
 
 .tab {
   padding: 14px 24px;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 15px;
   font-weight: 400;
   letter-spacing: 0.06em;
@@ -263,7 +266,7 @@
 
 .tituloSecao {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 18px;
+  font-size: 25px;
   font-weight: 300;
   font-style: italic;
   color: var(--text);
@@ -320,7 +323,7 @@
 }
 
 .filmeFavTitulo {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 12px;
   font-weight: 600;
   color: #fff;
@@ -425,11 +428,12 @@
 }
 
 .reviewPoster {
-  width: 56px;
+  width: 150px;
   flex-shrink: 0;
   aspect-ratio: 2/3;
   object-fit: cover;
   border-radius: 2px;
+  align-self: flex-start;
 }
 
 .reviewBody {
@@ -437,6 +441,7 @@
   flex-direction: column;
   gap: 4px;
   flex: 1;
+  min-width: 0;
 }
 
 .reviewHeader {
@@ -446,7 +451,7 @@
 }
 
 .reviewFilme {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 16px;
   font-weight: 600;
   color: var(--text);
@@ -475,10 +480,15 @@
   color: rgba(255, 255, 255, 0.6);
   line-height: 1.6;
   margin-top: 2px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+  font-family: 'Poppins', sans-serif;
 }
 
 .reviewData {
   font-size: 11px;
+  font-family: 'Poppins', sans-serif;
   color: rgba(255, 255, 255, 0.25);
   margin-top: 4px;
 }
@@ -496,6 +506,7 @@
 .listaAtividade {
   display: flex;
   flex-direction: column;
+  width: 370px;
   gap: 0;
 }
 
@@ -527,6 +538,7 @@
 .atividadeInfo {
   display: flex;
   flex-direction: column;
+  font-family: 'Poppins', sans-serif;
   gap: 2px;
   flex: 1;
 }
@@ -748,7 +760,7 @@
 }
  
 .filmeVistoNota span {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 12px;
   color: var(--gold);
   font-weight: 600;
@@ -786,7 +798,7 @@
  
 .cardLogCatCategoria {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
   color: var(--gold);
   letter-spacing: 0.02em;
@@ -794,8 +806,9 @@
  
 .cardLogCatAno {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--gold-dark);
   letter-spacing: 0.06em;
+  font-family: 'Poppins', sans-serif;
 }
  
 .cardLogCatBody {
@@ -837,6 +850,7 @@
  
 .cardLogCatData {
   font-size: 11px;
+  font-family: 'Poppins', sans-serif;
   color: rgba(255, 255, 255, 0.2);
 }
 
@@ -925,7 +939,7 @@
 }
  
 .miniCardNome {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 12px;
   font-weight: 600;
   color: var(--text);
@@ -937,4 +951,13 @@
   font-size: 11px;
   color: rgba(201, 168, 76, 0.6);
   letter-spacing: 0.04em;
+}
+
+.miniCardClicavel:hover .miniCardImg {
+  outline: 1px solid var(--gold);
+}
+
+.miniCardClicavel:hover .miniCardNome {
+  color: var(--gold);
+  transition: color 0.2s ease;
 }

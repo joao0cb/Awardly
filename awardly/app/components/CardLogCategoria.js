@@ -17,46 +17,73 @@ function ehCategoriaPessoa(categoria) {
   return CATEGORIAS_PESSOA.some((c) => categoria?.includes(c));
 }
 
-async function buscarFotoPessoa(nome) {
-  if (!nome) return null;
+// Busca foto + tmdbId da pessoa
+async function buscarDadosPessoa(nome) {
+  if (!nome) return { foto: null, tmdbId: null };
   try {
     const res = await fetch(
       `https://api.themoviedb.org/3/search/person?api_key=${TMDB_KEY}&query=${encodeURIComponent(nome)}&language=pt-BR`
     );
     const data = await res.json();
     const person = data.results?.[0];
-    if (person?.profile_path) return `${TMDB_IMAGE}/w185${person.profile_path}`;
-    return null;
-  } catch { return null; }
+    return {
+      foto: person?.profile_path ? `${TMDB_IMAGE}/w185${person.profile_path}` : null,
+      tmdbId: person?.id || null,
+    };
+  } catch { return { foto: null, tmdbId: null }; }
 }
 
+// Busca poster de filme
 async function buscarPosterFilme(titulo) {
-  if (!titulo) return null;
+  if (!titulo) return { foto: null, tmdbId: null };
   try {
     const res = await fetch(
       `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${encodeURIComponent(titulo)}&language=pt-BR`
     );
     const data = await res.json();
     const filme = data.results?.[0];
-    if (filme?.poster_path) return `${TMDB_IMAGE}/w185${filme.poster_path}`;
-    return null;
-  } catch { return null; }
-}
-
-async function buscarFoto(nome, ehPessoa) {
-  return ehPessoa ? buscarFotoPessoa(nome) : buscarPosterFilme(nome);
+    return {
+      foto: filme?.poster_path ? `${TMDB_IMAGE}/w185${filme.poster_path}` : null,
+      tmdbId: filme?.id || null,
+    };
+  } catch { return { foto: null, tmdbId: null }; }
 }
 
 function MiniCard({ nome, label, ehPessoa, highlighted }) {
+  const router = useRouter();
   const [foto, setFoto] = useState(null);
+  const [tmdbId, setTmdbId] = useState(null);
 
   useEffect(() => {
     if (!nome) return;
-    buscarFoto(nome, ehPessoa).then(setFoto).catch(console.error);
+    if (ehPessoa) {
+      buscarDadosPessoa(nome).then(({ foto, tmdbId }) => {
+        setFoto(foto);
+        setTmdbId(tmdbId);
+      });
+    } else {
+      buscarPosterFilme(nome).then(({ foto, tmdbId }) => {
+        setFoto(foto);
+        setTmdbId(tmdbId);
+      });
+    }
   }, [nome, ehPessoa]);
 
+  function handleClick() {
+    if (!tmdbId) return;
+    if (ehPessoa) {
+      router.push(`/atores/${tmdbId}`);
+    } else {
+      router.push(`/filmes/${tmdbId}`);
+    }
+  }
+
   return (
-    <div className={`${styles.miniCard} ${highlighted ? styles.miniCardHighlight : ""}`}>
+    <div
+      className={`${styles.miniCard} ${highlighted ? styles.miniCardHighlight : ""} ${tmdbId ? styles.miniCardClicavel : ""}`}
+      onClick={handleClick}
+      style={{ cursor: tmdbId ? "pointer" : "default" }}
+    >
       <div className={styles.miniCardImg} style={{ aspectRatio: ehPessoa ? "1/1" : "2/3" }}>
         {foto ? (
           <img
@@ -83,10 +110,7 @@ function MiniCard({ nome, label, ehPessoa, highlighted }) {
 }
 
 export default function CardLogCategoria({ log }) {
-  const router = useRouter();
   const isPessoa = ehCategoriaPessoa(log.categoria);
-
-  // Só mostra miniCards se tiver pelo menos um campo
   const temFotos = log.vencedorReal || log.deveriaTerGanhado || log.queriaQueGanhasse;
 
   return (
@@ -99,38 +123,15 @@ export default function CardLogCategoria({ log }) {
       {temFotos && (
         <div className={styles.cardLogCatFotos}>
           {log.vencedorReal && (
-            <MiniCard
-              nome={log.vencedorReal}
-              label="venceu"
-              ehPessoa={isPessoa}
-            />
+            <MiniCard nome={log.vencedorReal} label="venceu" ehPessoa={isPessoa} />
           )}
-          {log.deveriaTerGanhado && log.deveriaTerGanhado !== log.vencedorReal && (
-            <MiniCard
-              nome={log.deveriaTerGanhado}
-              label="deveria ter ganhado"
-              ehPessoa={isPessoa}
-              highlighted
-            />
+          {log.deveriaTerGanhado && (
+            <MiniCard nome={log.deveriaTerGanhado} label="deveria ter ganhado" ehPessoa={isPessoa} highlighted />
           )}
-          {log.queriaQueGanhasse &&
-            log.queriaQueGanhasse !== log.deveriaTerGanhado &&
-            log.queriaQueGanhasse !== log.vencedorReal && (
-            <MiniCard
-              nome={log.queriaQueGanhasse}
-              label="queria que ganhasse"
-              ehPessoa={isPessoa}
-              highlighted
-            />
+          {log.queriaQueGanhasse && (
+            <MiniCard nome={log.queriaQueGanhasse} label="queria que ganhasse" ehPessoa={isPessoa} highlighted />
           )}
         </div>
-      )}
-
-      {/* Se deveria = queria, mostra só uma vez mas com label diferente */}
-      {log.deveriaTerGanhado && log.deveriaTerGanhado === log.queriaQueGanhasse && (
-        <p className={styles.cardLogCatConcorda}>
-          ✓ Concordou com sua escolha
-        </p>
       )}
 
       {log.review && (

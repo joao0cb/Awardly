@@ -283,20 +283,23 @@ export default function Perfil() {
         qFollows.equalTo("seguidor", user);
         qFollows.descending("createdAt");
         qFollows.limit(3);
-        qFollows.include("seguindo");
         const follows = await qFollows.find();
-        follows.forEach((f) => {
-          const seg = f.get("seguindo");
-          const nomeAlvo = seg?.get("nome") || seg?.get("username") || "alguém";
-          const usernameAlvo = seg?.get("username");
-          atividadeItems.push({
-            tipo: "seguindo",
-            texto: `Você começou a seguir ${nomeAlvo}`,
-            data: tempoRelativo(f.createdAt),
-            createdAt: f.createdAt,
-            link: usernameAlvo ? `/perfil/${usernameAlvo}` : null,
-          });
-        });
+
+        await Promise.allSettled(follows.map(async (f) => {
+          const seguindoId = f.get("seguindo")?.id;
+          if (!seguindoId) return;
+          try {
+            const dados = await Parse.Cloud.run("buscarUsuario", { id: seguindoId });
+            const nomeAlvo = dados.nome || dados.username || "alguém";
+            atividadeItems.push({
+              tipo: "seguindo",
+              texto: `Você começou a seguir "${nomeAlvo}"`,
+              data: tempoRelativo(f.createdAt),
+              createdAt: f.createdAt,   // ← data real do follow
+              link: dados.username ? `/perfil/${dados.username}` : null,
+            });
+          } catch {}
+        }));
 
         atividadeItems.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setAtividade(atividadeItems.slice(0, 5));

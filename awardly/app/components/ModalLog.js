@@ -250,9 +250,9 @@ function EtapaLog({ filme, detalhes, onSalvar, salvando, erro }) {
           placeholder="O que você achou do filme?"
           className={styles.textarea}
           rows={3}
-          maxLength={1000}
+          maxLength={500}
         />
-        {review && <span className={styles.contador}>{review.length}/1000</span>}
+        {review && <span className={styles.contador}>{review.length}/500</span>}
       </div>
 
       {erro && <p className={styles.erro}>{erro}</p>}
