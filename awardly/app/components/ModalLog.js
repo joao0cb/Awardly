@@ -5,11 +5,11 @@ import Parse from "@/lib/parseClient";
 import { getFilme, getImageURL } from "@/lib/tmdb";
 import styles from "@/styles/modalLog.module.css";
 
-async function buscarFilmes(termo) {
+async function buscarFilmesPorTitulo(termo) {
   if (!termo.trim()) return [];
   const Filme = Parse.Object.extend("Filme");
   const query = new Parse.Query(Filme);
-  query.contains("titulo", termo);
+  query.matches("titulo", termo, "i");
   query.limit(8);
   const resultados = await query.find();
   return resultados.map((f) => ({
@@ -18,6 +18,51 @@ async function buscarFilmes(termo) {
     titulo: f.get("titulo"),
     ano: f.get("ano"),
   }));
+}
+
+async function buscarFilmesPorTituloOriginal(termo) {
+  if (!termo.trim()) return [];
+  try {
+    const url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${encodeURIComponent(termo)}&language=pt-BR`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const tmdbIds = (data.results || []).slice(0, 10).map((m) => m.id);
+    if (tmdbIds.length === 0) return [];
+
+    const Filme = Parse.Object.extend("Filme");
+    const query = new Parse.Query(Filme);
+    query.containedIn("tmdbId", tmdbIds);
+    query.limit(8);
+    const resultados = await query.find();
+    return resultados.map((f) => ({
+      objectId: f.id,
+      tmdbId: f.get("tmdbId"),
+      titulo: f.get("titulo"),
+      ano: f.get("ano"),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+async function buscarFilmes(termo) {
+  const [porTitulo, porOriginal] = await Promise.allSettled([
+    buscarFilmesPorTitulo(termo),
+    buscarFilmesPorTituloOriginal(termo),
+  ]);
+
+  const lista1 = porTitulo.status === "fulfilled" ? porTitulo.value : [];
+  const lista2 = porOriginal.status === "fulfilled" ? porOriginal.value : [];
+
+  const vistos = new Set();
+  const merged = [];
+  for (const f of [...lista1, ...lista2]) {
+    if (!vistos.has(f.objectId)) {
+      vistos.add(f.objectId);
+      merged.push(f);
+    }
+  }
+  return merged.slice(0, 8);
 }
 
 function Estatuetas({ valor, onChange }) {

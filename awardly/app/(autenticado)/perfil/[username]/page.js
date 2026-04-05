@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Parse from "@/lib/parseClient";
-import NavbarLogin from "@/app/components/NavbarLogin";
 import styles from "@/styles/perfil.module.css";
 import pub from "@/styles/perfilPublico.module.css";
 import { getFilme, getImageURL } from "@/lib/tmdb";
@@ -279,7 +278,6 @@ export default function PerfilPublico() {
   if (carregando) {
     return (
       <main className={styles.principal}>
-        <NavbarLogin usuario={{ nome: "", foto: null }} />
         <div className={styles.esqueletoPage} />
       </main>
     );
@@ -288,7 +286,6 @@ export default function PerfilPublico() {
   if (!dadosAlvo) {
     return (
       <main className={styles.principal}>
-        <NavbarLogin usuario={{ nome: "", foto: null }} />
         <div className={styles.conteudoFull}>
           <p className={styles.vazio}>Usuário não encontrado.</p>
         </div>
@@ -307,8 +304,6 @@ export default function PerfilPublico() {
 
   return (
     <main className={styles.principal}>
-      <NavbarLogin usuario={{ nome: nomeLogado, foto: fotoLogado }} />
-
       <div className={styles.bannerWrap}>
         {bannerUrl ? (
           <img src={bannerUrl} alt="Banner" className={styles.bannerImg} />

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Parse from "@/lib/parseClient";
-import NavbarLogin from "../../components/NavbarLogin";
 import TabsPerfil from "../../components/TabsPerfil";
 import styles from "@/styles/perfil.module.css";
 import { getFilme, getImageURL } from "@/lib/tmdb";
@@ -247,7 +246,6 @@ export default function Perfil() {
   if (carregando) {
     return (
       <main className={styles.principal}>
-        <NavbarLogin usuario={{ nome: "", foto: null }} />
         <div className={styles.esqueletoPage} />
       </main>
     );
@@ -262,8 +260,6 @@ export default function Perfil() {
 
   return (
     <main className={styles.principal}>
-      <NavbarLogin usuario={{ nome, foto }} />
-
       <div className={styles.bannerWrap}>
         {bannerUrl ? (
           <img src={bannerUrl} alt="Banner" className={styles.bannerImg} />

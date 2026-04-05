@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Parse from "@/lib/parseClient";
-import NavbarLogin from "../../../components/NavbarLogin";
 import TabsPerfil from "../../../components/TabsPerfil";
 import styles from "@/styles/perfil.module.css";
 import { getFilme, getImageURL } from "@/lib/tmdb";
@@ -87,8 +86,6 @@ export default function PerfilReviews() {
 
   return (
     <main className={styles.principal}>
-      <NavbarLogin usuario={{ nome, foto }} />
-
       <div className={styles.bannerWrap}>
         <div className={styles.banner} />
         <div className={styles.headerPerfil}>

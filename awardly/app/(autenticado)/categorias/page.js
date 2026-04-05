@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useFilmes } from '../../../hooks/useFilmes';
 import FilmeCard from '@/app/components/FilmeCard';
 import '@/styles/categorias.css';
-import NavbarLogin from '../../components/NavbarLogin';
 import Parse from '@/lib/parseClient';
 
 const ANOS = [2023, 2024, 2025, 2026];
@@ -142,8 +141,6 @@ export default function Categorias() {
 
   return (
     <div className="categorias-container">
-      <NavbarLogin usuario={{ nome, foto }} />
-
       <h1 className="categorias-titulo">Categorias do Oscar</h1>
 
       <div className="filtros">

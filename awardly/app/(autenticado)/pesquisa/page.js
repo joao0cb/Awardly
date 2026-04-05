@@ -3,7 +3,6 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Parse from "@/lib/parseClient";
-import NavbarLogin from "../../components/NavbarLogin";
 import styles from "@/styles/pesquisa.module.css";
 import { getFilme, getImageURL } from "@/lib/tmdb";
 
@@ -71,6 +70,8 @@ async function buscarFilmes(termo) {
 
 function CardFilme({ filme, detalhes }) {
   const router = useRouter();
+  const anoLancamento = detalhes?.release_date?.slice(0, 4) || filme.ano;
+
   return (
     <div
       className={styles.card}
@@ -89,7 +90,7 @@ function CardFilme({ filme, detalhes }) {
       </div>
       <div className={styles.cardInfo}>
         <p className={styles.cardTitulo}>{filme.titulo}</p>
-        <span className={styles.cardAno}>{filme.ano}</span>
+        <span className={styles.cardAno}>{anoLancamento}</span>
         {filme.categorias?.length > 0 && (
           <div className={styles.cardCategorias}>
             {filme.categorias.slice(0, 2).map((c, i) => (
@@ -179,7 +180,6 @@ function PaginaPesquisaInterna() {
 
   return (
     <main className={styles.principal}>
-      <NavbarLogin usuario={{ nome, foto }} />
       <div className={styles.conteudo}>
         <ResultadosBusca termo={termo} usuario={usuario} />
       </div>

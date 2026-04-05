@@ -4,7 +4,6 @@ import { useState, useEffect, useRef, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Parse from '@/lib/parseClient';
 import { getFilme, getFilmeCreditos, getFilmeImagens, getImageURL } from '../../../../lib/tmdb';
-import NavbarLogin from '../../../components/NavbarLogin';
 import '@/styles/filmeUnico.css';
 
 async function verificarWatchlist(tmdbId) {
@@ -274,7 +273,6 @@ export default function FilmeUnico({ params }) {
 
   if (loading) return (
     <div className="filme-unico">
-      <NavbarLogin usuario={{ nome, foto }} />
       <div className="filme-loading" />
     </div>
   );
@@ -282,8 +280,6 @@ export default function FilmeUnico({ params }) {
 
   return (
     <div className="filme-unico">
-      <NavbarLogin usuario={{ nome, foto }} />
-
       <div className="filme-hero" style={{ backgroundImage: `url(${filme.backdrop})` }}>
         <div className="filme-hero-overlay">
           <img src={filme.poster} alt={filme.titulo} className="filme-poster" />

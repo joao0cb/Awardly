@@ -2,7 +2,6 @@
 
 import { useEffect, useState, Suspense } from "react";
 import Parse from "@/lib/parseClient";
-import NavbarLogin from "@/app/components/NavbarLogin";
 import styles from "@/styles/perfil.module.css";
 import pub from "@/styles/perfilPublico.module.css";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
@@ -175,8 +174,6 @@ function ConteudoSeguidores() {
 
   return (
     <main className={styles.principal}>
-      <NavbarLogin usuario={{ nome: nomeLogado, foto: fotoLogado }} />
-
       <div className={pub.paginaSeguidores}>
         <div className={pub.cabecalhoSeguidores}>
           <button
