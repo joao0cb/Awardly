@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import Parse from "@/lib/parseClient";
-import NavbarLogin from "../../components/NavbarLogin";
 import FilmesFavoritos from "../../components/FilmesFavoritos";
 import { useRouter } from "next/navigation";
 import { getFilme } from "@/lib/tmdb";
@@ -127,8 +126,6 @@ export default function EditarPerfil() {
 
   return (
     <main className={styles.principal}>
-      <NavbarLogin usuario={{ nome, foto: fotoPreview }} />
-
       <div className={styles.pagina}>
         <div className={styles.cabecalho}>
           <button className={styles.btnVoltar} onClick={() => router.push("/perfil")}>

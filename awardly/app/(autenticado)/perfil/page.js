@@ -281,6 +281,14 @@ export default function Perfil() {
           <button className={styles.btnEditar} onClick={() => router.push("/editarPerfil")}>
             Editar perfil
           </button>
+          <button className={styles.btnSair} onClick={async () => {
+            await Parse.User.logOut();
+            document.cookie = 'awardly_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+            document.cookie = 'awardly_lembrar=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+            window.location.href = '/';
+          }}>
+            Sair
+          </button>
         </div>
       </div>
 

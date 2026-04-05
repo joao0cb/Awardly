@@ -202,6 +202,59 @@
   box-shadow: 0 0 10px rgba(255, 208, 0, 0.15);
 }
 
+.lembrar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+  font-family: 'Poppins', sans-serif;
+  user-select: none;
+  width: fit-content;
+  transition: color 0.2s;
+}
+
+.lembrar:hover {
+  color: var(--gold);
+}
+
+.lembrar input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 0.1px;
+  height: 2px;
+  min-width: 0.1px;
+  min-height: 2px;
+  border: 1px solid rgba(255, 200, 0, 0.3);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.2s, background 0.2s;
+  flex-shrink: 0;
+  box-sizing: content-box;
+}
+
+.lembrar input[type="checkbox"]:checked {
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 0 8px rgba(255, 208, 0, 0.3);
+}
+
+.lembrar input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 13px;
+  border: 2px solid #0a0a0a;
+  border-top: none;
+  border-left: none;
+  transform: translate(-50%, -60%) rotate(45deg);
+}
+
 ::selection {
   background-color: var(--gold);
   color: #000000;

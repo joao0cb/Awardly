@@ -29,7 +29,7 @@ function CardUsuario({ usuario, usuarioLogado }) {
       setSeguindo(!!existe);
     }
     verificar();
-  }, [usuario.objectId]);
+  }, [usuario.objectId, usuarioLogado]);
 
   async function handleToggleFollow() {
     if (!usuarioLogado || salvando) return;
@@ -55,22 +55,15 @@ function CardUsuario({ usuario, usuarioLogado }) {
         await novoFollow.save();
         setSeguindo(true);
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setSalvando(false);
-    }
+    } catch (e) { console.error(e); }
+    finally { setSalvando(false); }
   }
 
   return (
     <div className={pub.cardUsuario}>
       <div
         className={pub.cardUsuarioInfo}
-        onClick={() =>
-          ehEuMesmo
-            ? router.push("/perfil")
-            : router.push(`/perfil/${usuario.username}`)
-        }
+        onClick={() => ehEuMesmo ? router.push("/perfil") : router.push(`/perfil/${usuario.username}`)}
       >
         <div className={pub.cardUsuarioAvatar}>
           {usuario.foto ? (
@@ -124,35 +117,13 @@ function ConteudoSeguidores() {
           setUsuarioLogado(logado);
         }
 
+        // Busca objectId do alvo via Cloud Function
         const dados = await Parse.Cloud.run("buscarUsuarioPorUsername", { username });
-        const id = dados.objectId; // id local, usado só neste useEffect
+        const id = dados.objectId;
         setNomeAlvo(dados?.nome || dados?.username || "Usuário");
 
-        const alvoPtr = userPointer(id);
-
-        const qFollow = new Parse.Query("Follow");
-        if (aba === "seguidores") {
-          qFollow.equalTo("seguindo", alvoPtr);
-          qFollow.include("seguidor");
-        } else {
-          qFollow.equalTo("seguidor", alvoPtr);
-          qFollow.include("seguindo");
-        }
-        qFollow.descending("createdAt");
-        qFollow.limit(100);
-        const resultados = await qFollow.find();
-
-        const usuarios = resultados.map((f) => {
-          const u = aba === "seguidores" ? f.get("seguidor") : f.get("seguindo");
-          return {
-            objectId: u?.id,
-            nome: u?.get("nome") || "",
-            username: u?.get("username") || "",
-            bio: u?.get("bio") || "",
-            foto: u?.get("foto")?._url || null,
-          };
-        }).filter((u) => u.objectId);
-
+        // Cloud Function com masterKey retorna a lista corretamente
+        const usuarios = await Parse.Cloud.run("buscarSeguidores", { userId: id, aba });
         setLista(usuarios);
       } catch (e) {
         console.error(e);
