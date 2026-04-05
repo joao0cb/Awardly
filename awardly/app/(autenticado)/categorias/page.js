@@ -85,16 +85,12 @@ export default function Categorias() {
         const atores = filme.atoresIndicados?.[cat];
         if (Array.isArray(atores) && atores.length > 1) {
           atores.forEach((ator) => {
-            const venceu = filme.vencedores?.some((v) => v === `${cat}::${ator}`);
+            const venceu = filme.vencedores?.includes(`${cat}::${ator}`);
             acc[cat].push({ ...filme, _itemForcado: ator, _venceuItem: venceu });
           });
         } else {
           const ator = Array.isArray(atores) ? atores[0] : atores;
-          acc[cat].push({
-            ...filme,
-            _itemForcado: ator || null,
-            _venceuItem: filme.vencedores?.includes(cat),
-          });
+          acc[cat].push({ ...filme, _itemForcado: ator || null, _venceuItem: filme.vencedores?.includes(cat) });
         }
       } else if (cat === 'Melhor Diretor') {
         acc[cat].push({
@@ -106,13 +102,12 @@ export default function Categorias() {
         const cancoes = filme.cancao?.[cat];
         if (Array.isArray(cancoes) && cancoes.length > 1) {
           cancoes.forEach((cancao) => {
-            const venceu = filme.vencedores?.some((v) => v === `${cat}::${cancao}`);
+            const venceu = filme.vencedores?.includes(`${cat}::${cancao}`);
             acc[cat].push({ ...filme, _itemForcado: cancao, _venceuItem: venceu });
           });
         } else {
           const cancao = Array.isArray(cancoes) ? cancoes[0] : cancoes;
-          const venceu = filme.vencedores?.some((v) => v === cat || v === `${cat}::${cancao}`);
-          acc[cat].push({ ...filme, _itemForcado: cancao || null, _venceuItem: venceu });
+          acc[cat].push({ ...filme, _itemForcado: cancao || null, _venceuItem: filme.vencedores?.includes(cat) });
         }
       } else if (CATEGORIAS_ROTEIRO.includes(cat)) {
         acc[cat].push({

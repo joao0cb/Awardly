@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Parse from '@/lib/parseClient';
 import NavbarLogin from '@/app/components/NavbarLogin';
+import Footer from '@/app/components/Footer'
 
 export default function LayoutAutenticado({ children }) {
   const router = useRouter();
@@ -41,6 +42,7 @@ export default function LayoutAutenticado({ children }) {
     <>
       <NavbarLogin usuario={{ nome, foto }} />
       {children}
+      <Footer />
     </>
   );
 }

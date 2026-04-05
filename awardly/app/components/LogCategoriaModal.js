@@ -102,10 +102,11 @@ export default function LogCategoriaModal({ categoria, ano, filmes, onClose }) {
           const nomes = Array.isArray(atores) ? atores : atores ? [atores] : [];
           for (const nome of nomes) {
             const foto = await buscarFotoPessoa(nome);
-            // Fix: venceu quando vencedores inclui "Categoria::NomeAtor" OU filme._venceuItem com _itemForcado igual
-            const venceu = (filme.vencedores || []).some(
-              v => v === `${categoria}::${nome}` || v === categoria
-            ) && (filme._itemForcado === nome || !filme._itemForcado);
+            const vencedores = filme.vencedores || [];
+            const temFormatoDetalhado = vencedores.some(v => v.startsWith(`${categoria}::`));
+            const venceu = temFormatoDetalhado
+              ? vencedores.includes(`${categoria}::${nome}`)
+              : vencedores.includes(categoria);
             lista.push({ nomeItem: nome, filme: filme.titulo, foto, venceu });
           }
         } else if (tipo === 'diretor') {
