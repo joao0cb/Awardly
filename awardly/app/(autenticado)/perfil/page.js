@@ -7,10 +7,15 @@ import styles from "@/styles/perfil.module.css";
 import { getFilme, getImageURL } from "@/lib/tmdb";
 import { useRouter } from "next/navigation";
 import pub from "@/styles/perfilPublico.module.css";
+import CardLogCategoria from "@/app/components/CardLogCategoria";
+import AtividadeItem from "@/app/components/AtividadeItem";
 
-function EstatCard({ valor, label }) {
+function EstatCard({ valor, label, onClick }) {
   return (
-    <div className={styles.estatCard}>
+    <div
+      className={`${styles.estatCard} ${onClick ? pub.estatClicavel : ""}`}
+      onClick={onClick}
+    >
       <span className={styles.estatValor}>{valor}</span>
       <span className={styles.estatLabel}>{label}</span>
     </div>
@@ -34,6 +39,35 @@ function FilmeFavorito({ filme }) {
       )}
       <div className={styles.filmeFavOverlay}>
         <span className={styles.filmeFavTitulo}>{filme.title || filme.nome}</span>
+      </div>
+    </div>
+  );
+}
+
+function FilmeVisto({ filme }) {
+  const router = useRouter();
+  return (
+    <div className={styles.filmeFav} onClick={() => router.push(`/filmes/${filme.id}`)}>
+      {filme.poster_path ? (
+        <img
+          src={getImageURL(filme.poster_path, "w342")}
+          alt={filme.title}
+          className={styles.filmeFavImg}
+        />
+      ) : (
+        <div className={styles.filmeFavSemPoster} />
+      )}
+      {filme.like && (
+        <img src="/envelopecoracao.png" className={styles.cardFilmeLike} alt="" />
+      )}
+      <div className={styles.filmeFavOverlay}>
+        <span className={styles.filmeFavTitulo}>{filme.title}</span>
+        {filme.estatuetas > 0 && (
+          <div className={styles.filmeVistoNota}>
+            <img src="/oscar2.png" className={styles.filmeVistoOscar} alt="" />
+            <span>{filme.estatuetas}</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -87,19 +121,6 @@ function ReviewCard({ review }) {
   );
 }
 
-function AtividadeItem({ item }) {
-  const icones = { log: "🎬", review: "✍️", seguindo: "👤" };
-  return (
-    <div className={styles.atividadeItem}>
-      <span className={styles.atividadeIcone}>{icones[item.tipo]}</span>
-      <div className={styles.atividadeInfo}>
-        <p className={styles.atividadeTexto}>{item.texto}</p>
-        <span className={styles.atividadeData}>{item.data}</span>
-      </div>
-    </div>
-  );
-}
-
 function tempoRelativo(date) {
   if (!date) return "";
   const diff = Date.now() - new Date(date).getTime();
@@ -120,8 +141,11 @@ export default function Perfil() {
   const [totalFilmes, setTotalFilmes] = useState(0);
   const [totalReviews, setTotalReviews] = useState(0);
   const [totalWatchlist, setTotalWatchlist] = useState(0);
+  const [totalCategorias, setTotalCategorias] = useState(0);
   const [filmesFavoritos, setFilmesFavoritos] = useState([]);
+  const [filmesVistos, setFilmesVistos] = useState([]);
   const [reviewsRecentes, setReviewsRecentes] = useState([]);
+  const [logsCategoria, setLogsCategoria] = useState([]);
   const [atividade, setAtividade] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const router = useRouter();
@@ -131,8 +155,6 @@ export default function Perfil() {
       try {
         const user = Parse.User.current();
         if (!user) { setCarregando(false); return; }
-
-        // Busca o usuário fresco do servidor para garantir URLs atualizadas
         await user.fetch();
         setUsuario(user);
 
@@ -140,18 +162,18 @@ export default function Perfil() {
         qSeg.equalTo("seguindo", user);
         const qSeguindo = new Parse.Query("Follow");
         qSeguindo.equalTo("seguidor", user);
-
         const qWatch = new Parse.Query("Watchlist");
         qWatch.equalTo("usuarioId", user);
+        const qCat = new Parse.Query("LogCategoria");
+        qCat.equalTo("usuarioId", user);
 
-        const [nSeg, nSeguindo, nWatch] = await Promise.all([
-          qSeg.count(),
-          qSeguindo.count(),
-          qWatch.count(),
+        const [nSeg, nSeguindo, nWatch, nCat] = await Promise.all([
+          qSeg.count(), qSeguindo.count(), qWatch.count(), qCat.count(),
         ]);
         setSeguidores(nSeg);
         setSeguindo(nSeguindo);
         setTotalWatchlist(nWatch);
+        setTotalCategorias(nCat);
 
         // Favoritos
         const tmdbIds = user.get("favoritos") || [];
@@ -162,22 +184,37 @@ export default function Perfil() {
           );
         }
 
-        // Logs
+        // Logs de filmes
         const qLogs = new Parse.Query("Log");
         qLogs.equalTo("usuarioId", user);
         qLogs.descending("createdAt");
         qLogs.limit(20);
         const logs = await qLogs.find();
-
         setTotalFilmes(logs.length);
 
-        const logsComReview = logs.filter((l) => l.get("review"));
-        setTotalReviews(logsComReview.length);
+        // 4 filmes vistos mais recentes
+        const top4Logs = logs.slice(0, 4);
+        const filmesVistosDetalhes = await Promise.allSettled(
+          top4Logs.map(async (l) => {
+            const f = await getFilme(l.get("filmeId"));
+            return f ? {
+              ...f,
+              estatuetas: l.get("estatuetas") || 0,
+              like: l.get("like") || false,
+            } : null;
+          })
+        );
+        setFilmesVistos(
+          filmesVistosDetalhes
+            .filter((r) => r.status === "fulfilled" && r.value)
+            .map((r) => r.value)
+        );
 
         // Reviews recentes — max 3
-        const top3Reviews = logsComReview.slice(0, 3);
+        const logsComReview = logs.filter((l) => l.get("review"));
+        setTotalReviews(logsComReview.length);
         const reviewsDetalhes = await Promise.allSettled(
-          top3Reviews.map(async (r) => {
+          logsComReview.slice(0, 3).map(async (r) => {
             const filme = await getFilme(r.get("filmeId"));
             return {
               titulo: filme?.title || "Filme",
@@ -193,27 +230,55 @@ export default function Perfil() {
           reviewsDetalhes.filter((r) => r.status === "fulfilled").map((r) => r.value)
         );
 
-        // Atividade recente
+        // Últimos 2 logs de categoria
+        const qLogCat = new Parse.Query("LogCategoria");
+        qLogCat.equalTo("usuarioId", user);
+        qLogCat.descending("createdAt");
+        qLogCat.limit(2);
+        const logsCat = await qLogCat.find();
+        setLogsCategoria(logsCat.map((l) => ({
+          id: l.id,
+          categoria: l.get("categoria"),
+          ano: l.get("ano"),
+          vencedorReal: l.get("vencedorReal"),
+          deveriaTerGanhado: l.get("deveriaTerGanhado"),
+          queriaQueGanhasse: l.get("queriaQueGanhasse"),
+          review: l.get("review"),
+          data: tempoRelativo(l.createdAt),
+        })));
+
+        // Atividade recente — "Você fez X"
         const atividadeItems = [];
-        const top5Logs = logs.slice(0, 5);
+ 
         const logsAtividade = await Promise.allSettled(
-          top5Logs.map(async (l) => {
+          logs.slice(0, 5).map(async (l) => {
             const filme = await getFilme(l.get("filmeId"));
             const temReview = !!l.get("review");
             return {
               tipo: temReview ? "review" : "log",
               texto: temReview
-                ? `escreveu uma review de "${filme?.title || "filme"}"`
-                : `registrou "${filme?.title || "filme"}"`,
+                ? `Você escreveu uma review de "${filme?.title || "filme"}"`
+                : `Você logou "${filme?.title || "filme"}"`,
               data: tempoRelativo(l.createdAt),
               createdAt: l.createdAt,
+              link: filme ? `/filmes/${l.get("filmeId")}` : null,
             };
           })
         );
         logsAtividade
           .filter((r) => r.status === "fulfilled")
           .forEach((r) => atividadeItems.push(r.value));
-
+ 
+        logsCat.forEach((l) => {
+          atividadeItems.push({
+            tipo: "categoria",
+            texto: `Você avaliou "${l.get("categoria")}" (${l.get("ano")})`,
+            data: tempoRelativo(l.createdAt),
+            createdAt: l.createdAt,
+            link: "/perfil/categorias",
+          });
+        });
+ 
         const qFollows = new Parse.Query("Follow");
         qFollows.equalTo("seguidor", user);
         qFollows.descending("createdAt");
@@ -221,13 +286,15 @@ export default function Perfil() {
         qFollows.include("seguindo");
         const follows = await qFollows.find();
         follows.forEach((f) => {
-          const seguindoUser = f.get("seguindo");
-          const nomeAlvo = seguindoUser?.get("nome") || seguindoUser?.get("username") || "alguém";
+          const seg = f.get("seguindo");
+          const nomeAlvo = seg?.get("nome") || seg?.get("username") || "alguém";
+          const usernameAlvo = seg?.get("username");
           atividadeItems.push({
             tipo: "seguindo",
-            texto: `começou a seguir ${nomeAlvo}`,
+            texto: `Você começou a seguir ${nomeAlvo}`,
             data: tempoRelativo(f.createdAt),
             createdAt: f.createdAt,
+            link: usernameAlvo ? `/perfil/${usernameAlvo}` : null,
           });
         });
 
@@ -257,6 +324,7 @@ export default function Perfil() {
   const foto = (typeof fotoObj?.url === "function" ? fotoObj.url() : fotoObj?._url) || null;
   const bannerObj = usuario?.get("banner");
   const bannerUrl = (typeof bannerObj?.url === "function" ? bannerObj.url() : bannerObj?._url) || null;
+  const username = usuario?.get("username") || "";
 
   return (
     <main className={styles.principal}>
@@ -294,34 +362,33 @@ export default function Perfil() {
 
       <div className={styles.estatRow}>
         <EstatCard valor={totalFilmes} label="filmes registrados" />
+        <EstatCard valor={totalCategorias} label="categorias avaliadas" />
         <EstatCard valor={totalReviews} label="reviews" />
         <EstatCard valor={totalWatchlist} label="watchlist" />
-        <div
-          className={`${styles.estatCard} ${pub.estatClicavel}`}
-          onClick={() => router.push(`/seguidores/${usuario.get("username")}?aba=seguidores`)}
-        >
-          <span className={styles.estatValor}>{seguidores}</span>
-          <span className={styles.estatLabel}>seguidores</span>
-        </div>
-        <div
-          className={`${styles.estatCard} ${pub.estatClicavel}`}
-          onClick={() => router.push(`/seguidores/${usuario.get("username")}?aba=seguindo`)}
-        > 
-          <span className={styles.estatValor}>{seguindo}</span>
-          <span className={styles.estatLabel}>seguindo</span>
-        </div>
+        <EstatCard
+          valor={seguidores}
+          label="seguidores"
+          onClick={() => router.push(`/seguidores/${username}?aba=seguidores`)}
+        />
+        <EstatCard
+          valor={seguindo}
+          label="seguindo"
+          onClick={() => router.push(`/seguidores/${username}?aba=seguindo`)}
+        />
       </div>
 
       <TabsPerfil ativa="perfil" />
 
       <div className={styles.conteudo}>
         <div className={styles.colunaEsq}>
+
+          {/* Filmes favoritos */}
           <section className={styles.secao}>
             <h2 className={styles.tituloSecao}>filmes favoritos</h2>
             {filmesFavoritos.length > 0 ? (
               <div className={styles.gradeFilmesFav}>
                 {filmesFavoritos.map((f) => (
-                  <FilmeFavorito key={f.id || f.tmdbId} filme={f} />
+                  <FilmeFavorito key={f.id} filme={f} />
                 ))}
               </div>
             ) : (
@@ -329,6 +396,32 @@ export default function Perfil() {
             )}
           </section>
 
+          {/* Recentes — filmes vistos + logs de categoria juntos */}
+          <section className={styles.secao}>
+            <h2 className={styles.tituloSecao}>recentes</h2>
+
+            {filmesVistos.length > 0 && (
+              <div className={styles.gradeFilmesFav}>
+                {filmesVistos.map((f) => (
+                  <FilmeVisto key={f.id} filme={f} />
+                ))}
+              </div>
+            )}
+
+            {logsCategoria.length > 0 && (
+              <div className={styles.listaLogsCat}>
+                {logsCategoria.map((l) => (
+                  <CardLogCategoria key={l.id} log={l} />
+                ))}
+              </div>
+            )}
+
+            {filmesVistos.length === 0 && logsCategoria.length === 0 && (
+              <p className={styles.vazio}>Nenhuma atividade ainda.</p>
+            )}
+          </section>
+
+          {/* Reviews recentes */}
           <section className={styles.secao}>
             <h2 className={styles.tituloSecao}>reviews recentes</h2>
             {reviewsRecentes.length > 0 ? (

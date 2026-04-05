@@ -7,6 +7,7 @@ import styles from "@/styles/perfil.module.css";
 const TABS = [
   { label: "Perfil", href: "/perfil" },
   { label: "Filmes", href: "/perfil/filmes" },
+  { label: "Categorias", href: "/perfil/categorias" },
   { label: "Reviews", href: "/perfil/reviews" },
   { label: "Watchlist", href: "/perfil/watchlist" },
 ];

@@ -733,3 +733,208 @@
   -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
 }
+
+.filmeVistoNota {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 4px;
+}
+ 
+.filmeVistoOscar {
+  width: 12px;
+  height: 12px;
+  object-fit: contain;
+}
+ 
+.filmeVistoNota span {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 12px;
+  color: var(--gold);
+  font-weight: 600;
+}
+ 
+/* ── Cards de log de categoria ── */
+ 
+.listaLogsCat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+ 
+.cardLogCategoria {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.2s ease;
+}
+ 
+.cardLogCategoria:hover {
+  border-color: rgba(201, 168, 76, 0.3);
+}
+ 
+.cardLogCatHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+ 
+.cardLogCatCategoria {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+}
+ 
+.cardLogCatAno {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.06em;
+}
+ 
+.cardLogCatBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+ 
+.cardLogCatLinha {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+ 
+.cardLogCatLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+ 
+.cardLogCatValor {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.4;
+}
+ 
+.cardLogCatReview {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.6;
+  font-style: italic;
+  border-left: 2px solid rgba(201, 168, 76, 0.3);
+  padding-left: 10px;
+  margin-top: 4px;
+}
+ 
+.cardLogCatData {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.atividadeItemClicavel {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.atividadeItemClicavel:hover {
+  background: rgba(201, 168, 76, 0.04);
+  border-radius: 3px;
+}
+
+.atividadeSeta {
+  color: rgba(201, 168, 76, 0.4);
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.atividadeItemClicavel:hover .atividadeSeta {
+  color: var(--gold);
+}
+
+.cardLogCatFotos {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+ 
+.miniCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 135px;
+}
+ 
+.miniCardHighlight .miniCardNome {
+  color: var(--gold);
+}
+ 
+.miniCardImg {
+  width: 100%;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  position: relative;
+}
+ 
+.miniCardHighlight .miniCardImg {
+  border-color: rgba(201, 168, 76, 0.5);
+}
+ 
+.miniCardImg img {
+  display: block;
+}
+ 
+.miniCardPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: rgba(255,255,255,0.2);
+  background: var(--card-bg);
+  aspect-ratio: 1/1;
+}
+ 
+.miniCardInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  text-align: center;
+}
+ 
+.miniCardLabel {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+}
+ 
+.miniCardNome {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+  word-break: break-word;
+}
+ 
+.cardLogCatConcorda {
+  font-size: 11px;
+  color: rgba(201, 168, 76, 0.6);
+  letter-spacing: 0.04em;
+}
