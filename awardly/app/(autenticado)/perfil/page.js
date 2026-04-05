@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import pub from "@/styles/perfilPublico.module.css";
 import CardLogCategoria from "@/app/components/CardLogCategoria";
 import AtividadeItem from "@/app/components/AtividadeItem";
+import RevealSection from '@/app/components/RevealSection';
 
 function EstatCard({ valor, label, onClick }) {
   return (
@@ -390,8 +391,10 @@ export default function Perfil() {
             <h2 className={styles.tituloSecao}>filmes favoritos</h2>
             {filmesFavoritos.length > 0 ? (
               <div className={styles.gradeFilmesFav}>
-                {filmesFavoritos.map((f) => (
-                  <FilmeFavorito key={f.id} filme={f} />
+                {filmesFavoritos.map((f, i) => (
+                  <div key={f.id} className={styles.fadeUp} style={{ animationDelay: `${i * 60}ms` }}>
+                    <FilmeFavorito filme={f} />
+                  </div>
                 ))}
               </div>
             ) : (
@@ -400,43 +403,53 @@ export default function Perfil() {
           </section>
 
           {/* Recentes — filmes vistos + logs de categoria juntos */}
-          <section className={styles.secao}>
-            <h2 className={styles.tituloSecao}>recentes</h2>
+          <RevealSection delay={100}>
+            <section className={styles.secao}>
+              <h2 className={styles.tituloSecao}>recentes</h2>
 
-            {filmesVistos.length > 0 && (
-              <div className={styles.gradeFilmesFav}>
-                {filmesVistos.map((f) => (
-                  <FilmeVisto key={f.id} filme={f} />
-                ))}
-              </div>
-            )}
+              {filmesVistos.length > 0 && (
+                <div className={styles.gradeFilmesFav}>
+                  {filmesVistos.map((f, i) => (
+                    <div key={f.id} className={styles.fadeUp} style={{ animationDelay: `${i * 60}ms` }}>
+                      <FilmeVisto filme={f} />
+                    </div>
+                  ))}
+                </div>
+              )}
 
-            {logsCategoria.length > 0 && (
-              <div className={styles.listaLogsCat}>
-                {logsCategoria.map((l) => (
-                  <CardLogCategoria key={l.id} log={l} />
-                ))}
-              </div>
-            )}
+              {logsCategoria.length > 0 && (
+                <div className={styles.listaLogsCat}>
+                  {logsCategoria.map((l, i) => (
+                    <div key={l.id} className={styles.fadeUp} style={{ animationDelay: `${i * 80}ms` }}>
+                      <CardLogCategoria log={l} />
+                    </div>
+                  ))}
+                </div>
+              )}
 
-            {filmesVistos.length === 0 && logsCategoria.length === 0 && (
-              <p className={styles.vazio}>Nenhuma atividade ainda.</p>
-            )}
-          </section>
+              {filmesVistos.length === 0 && logsCategoria.length === 0 && (
+                <p className={styles.vazio}>Nenhuma atividade ainda.</p>
+              )}
+            </section>
+          </RevealSection>
 
           {/* Reviews recentes */}
-          <section className={styles.secao}>
-            <h2 className={styles.tituloSecao}>reviews recentes</h2>
-            {reviewsRecentes.length > 0 ? (
-              <div className={styles.listaReviews}>
-                {reviewsRecentes.map((r, i) => (
-                  <ReviewCard key={i} review={r} />
-                ))}
-              </div>
-            ) : (
-              <p className={styles.vazio}>Nenhuma review ainda.</p>
-            )}
-          </section>
+          <RevealSection delay={100}>
+            <section className={styles.secao}>
+              <h2 className={styles.tituloSecao}>reviews recentes</h2>
+              {reviewsRecentes.length > 0 ? (
+                <div className={styles.listaReviews}>
+                  {reviewsRecentes.map((r, i) => (
+                    <div key={i} className={styles.fadeUp} style={{ animationDelay: `${i * 80}ms` }}>
+                      <ReviewCard review={r} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className={styles.vazio}>Nenhuma review ainda.</p>
+              )}
+            </section>
+          </RevealSection>
         </div>
 
         <aside className={styles.sidebar}>
@@ -445,7 +458,9 @@ export default function Perfil() {
             {atividade.length > 0 ? (
               <div className={styles.listaAtividade}>
                 {atividade.map((a, i) => (
-                  <AtividadeItem key={i} item={a} />
+                  <div key={i} className={styles.fadeUp} style={{ animationDelay: `${i * 60}ms` }}>
+                    <AtividadeItem item={a} />
+                  </div>
                 ))}
               </div>
             ) : (

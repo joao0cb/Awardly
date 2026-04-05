@@ -7,6 +7,7 @@ import styles from "@/styles/perfil.module.css";
 import fil from "@/styles/filmesPerfil.module.css";
 import { getFilme, getImageURL } from "@/lib/tmdb";
 import { useRouter } from "next/navigation";
+import RevealSection from '@/app/components/RevealSection';
 
 function Estatuetas({ valor }) {
   return (
@@ -275,7 +276,9 @@ export default function PerfilFilmes() {
         ) : (
           <div key={gradeKey} className={styles.gradeFilmesAval}>
             {logsFiltrados.map((item, index) => (
-              <CardFilme key={item.id} item={item} index={index} router={router} />
+              <RevealSection key={item.id} delay={Math.min(index * 40, 300)}>
+                <CardFilme item={item} index={0} router={router} />
+              </RevealSection>
             ))}
           </div>
         )}

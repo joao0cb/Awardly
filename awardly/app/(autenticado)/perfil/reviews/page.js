@@ -8,6 +8,7 @@ import styles from "@/styles/perfil.module.css";
 import rev from "@/styles/reviewsPerfil.module.css";
 import { getFilme, getImageURL } from "@/lib/tmdb";
 import { useRouter } from "next/navigation";
+import RevealSection from '@/app/components/RevealSection';
 
 function tempoRelativo(date) {
   if (!date) return "";
@@ -248,18 +249,16 @@ export default function PerfilReviews() {
           <div className={rev.lista}>
             {/* Reviews de filmes */}
             {(tipo === "todos" || tipo === "filmes") && reviewsFilmesFiltradas.map((item, i) => (
-              <ReviewFilmeCard key={item.id} item={item} index={i} />
+              <RevealSection key={item.id} delay={Math.min(i * 50, 300)}>
+                <ReviewFilmeCard item={item} index={0} />
+              </RevealSection>
             ))}
 
             {/* Reviews de categorias */}
             {(tipo === "todos" || tipo === "categorias") && reviewsCategoriasFiltradas.map((l, i) => (
-              <div
-                key={l.id}
-                className={rev.cardAnimar}
-                style={{ animationDelay: `${Math.min(i * 50, 400)}ms` }}
-              >
+              <RevealSection key={l.id} delay={Math.min(i * 50, 300)}>
                 <CardLogCategoria log={l} />
-              </div>
+              </RevealSection>
             ))}
           </div>
         )}

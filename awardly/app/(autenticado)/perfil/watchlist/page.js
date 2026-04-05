@@ -6,6 +6,7 @@ import TabsPerfil from "../../../components/TabsPerfil";
 import styles from "@/styles/perfil.module.css";
 import { getFilme, getImageURL } from "@/lib/tmdb";
 import { useRouter } from "next/navigation";
+import RevealSection from '@/app/components/RevealSection';
 
 export default function PerfilWatchlist() {
   const [itens, setItens] = useState([]);
@@ -107,32 +108,19 @@ export default function PerfilWatchlist() {
           </div>
         ) : (
           <div className={styles.gradeFilmesAval}>
-            {itens.map(({ filme, parseId }) => (
-              <div key={parseId} className={styles.cardFilmeAval}>
-                <div
-                  className={styles.cardFilmeAvalImg}
-                  onClick={() => router.push(`/filmes/${filme.id}`)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <img
-                    src={getImageURL(filme.poster_path, "w342")}
-                    alt={filme.title}
-                  />
-                  <button
-                    className={styles.btnRemoverWatch}
-                    onClick={(e) => { e.stopPropagation(); remover(parseId); }}
-                    title="Remover da watchlist"
-                  >
-                    ✕
-                  </button>
+            {itens.map(({ filme, parseId }, i) => (
+              <RevealSection key={parseId} delay={Math.min(i * 50, 300)}>
+                <div className={styles.cardFilmeAval}>
+                  <div className={styles.cardFilmeAvalImg} onClick={() => router.push(`/filmes/${filme.id}`)} style={{ cursor: "pointer" }}>
+                    <img src={getImageURL(filme.poster_path, "w342")} alt={filme.title} />
+                    <button className={styles.btnRemoverWatch} onClick={(e) => { e.stopPropagation(); remover(parseId); }}>✕</button>
+                  </div>
+                  <div className={styles.cardFilmeAvalInfo}>
+                    <p className={styles.cardFilmeAvalTitulo}>{filme.title}</p>
+                    <span className={styles.cardFilmeAvalAno}>{filme.release_date?.slice(0, 4)}</span>
+                  </div>
                 </div>
-                <div className={styles.cardFilmeAvalInfo}>
-                  <p className={styles.cardFilmeAvalTitulo}>{filme.title}</p>
-                  <span className={styles.cardFilmeAvalAno}>
-                    {filme.release_date?.slice(0, 4)}
-                  </span>
-                </div>
-              </div>
+              </RevealSection>
             ))}
           </div>
         )}

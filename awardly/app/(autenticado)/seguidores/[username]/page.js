@@ -9,7 +9,7 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 function userPointer(userId) {
   const u = new Parse.User();
   u.id = userId;
-  return u;
+  return u; 
 }
 
 function CardUsuario({ usuario, usuarioLogado }) {
@@ -182,8 +182,10 @@ function ConteudoSeguidores() {
               {aba === "seguidores" ? "Nenhum seguidor ainda." : "Não está seguindo ninguém ainda."}
             </p>
           )}
-          {!carregando && lista.map((u) => (
-            <CardUsuario key={u.objectId} usuario={u} usuarioLogado={usuarioLogado} />
+          {!carregando && lista.map((u, i) => (
+            <div key={u.objectId} className={styles.fadeUp} style={{ animationDelay: `${Math.min(i * 50, 500)}ms` }}>
+              <CardUsuario usuario={u} usuarioLogado={usuarioLogado} />
+            </div>
           ))}
         </div>
       </div>

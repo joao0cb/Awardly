@@ -6,6 +6,7 @@ import TabsPerfil from "@/app/components/TabsPerfil";
 import CardLogCategoria from "@/app/components/CardLogCategoria";
 import styles from "@/styles/perfil.module.css";
 import cat from "@/styles/categoriasPerfil.module.css";
+import RevealSection from '@/app/components/RevealSection';
 
 function tempoRelativo(date) {
   if (!date) return "";
@@ -149,13 +150,11 @@ export default function PerfilCategorias() {
         ) : (
           <div className={cat.lista}>
             {logsFiltrados.map((l, index) => (
-              <div
-                key={l.id}
-                className={cat.cardAnimar}
-                style={{ animationDelay: `${Math.min(index * 60, 500)}ms` }}
-              >
-                <CardLogCategoria log={l} />
-              </div>
+              <RevealSection key={l.id} delay={Math.min(index * 60, 300)}>
+                <div className={cat.cardAnimar}>
+                  <CardLogCategoria log={l} />
+                </div>
+              </RevealSection>
             ))}
           </div>
         )}

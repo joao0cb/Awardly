@@ -7,7 +7,7 @@
   border-radius: 2px;
   background: var(--gold);
   color: #0a0906;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -34,7 +34,7 @@
   border-radius: 2px;
   background: transparent;
   color: rgba(255, 255, 255, 0.5);
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 13px;
   font-weight: 400;
   letter-spacing: 0.1em;
@@ -45,8 +45,8 @@
 }
 
 .btnSeguindo:hover {
-  border-color: rgba(180, 60, 60, 0.6);
-  color: rgba(220, 100, 100, 0.8);
+  border-color: #DC143C;
+  color: #DC143C;
 }
 
 .btnSeguindo:disabled {
@@ -83,8 +83,8 @@
   background: none;
   border: none;
   color: rgba(255, 255, 255, 0.4);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
   letter-spacing: 0.06em;
   cursor: pointer;
   transition: color 0.2s ease;
@@ -96,9 +96,9 @@
 }
 
 .tituloSeguidores {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text);
   letter-spacing: 0.01em;
 }
@@ -116,7 +116,7 @@
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 15px;
   letter-spacing: 0.06em;
   color: rgba(255, 255, 255, 0.4);
@@ -173,7 +173,7 @@
   height: 48px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--border);
+  border: 0.2px solid var(--border);
   transition: border-color 0.2s ease;
 }
 
@@ -186,11 +186,11 @@
   height: 48px;
   border-radius: 50%;
   background: var(--card-bg);
-  border: 2px solid var(--border);
+  border: 0.2px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 20px;
   font-weight: 600;
   color: var(--gold);
@@ -204,12 +204,12 @@
 .cardUsuarioTexto {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   min-width: 0;
 }
 
 .cardUsuarioNome {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 16px;
   font-weight: 600;
   color: var(--text);
@@ -220,8 +220,9 @@
 
 .cardUsuarioUsername {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--gold);
   letter-spacing: 0.04em;
+  font-family: 'Poppins', sans-serif;
 }
 
 .cardUsuarioBio {
@@ -231,6 +232,8 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-family: 'Poppins', sans-serif;
+  margin-top: 5px;
 }
 
 @media (max-width: 600px) {
