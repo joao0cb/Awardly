@@ -8,6 +8,7 @@ import fil from "@/styles/filmesPerfil.module.css";
 import { getFilme, getImageURL } from "@/lib/tmdb";
 import { useRouter } from "next/navigation";
 import RevealSection from '@/app/components/RevealSection';
+import ModalEditarLog from '@/app/components/ModalEditarLog';
 
 function Estatuetas({ valor }) {
   return (
@@ -35,14 +36,11 @@ function Estatuetas({ valor }) {
   );
 }
 
-// Card com fade-in animado
-function CardFilme({ item, index, router }) {
-  const { filme, estatuetas, like, dataAssistido, id } = item;
+function CardFilme({ item, router, onEditar }) {
+  const { filme, estatuetas, like, id } = item;
   return (
     <div
-      key={id}
-      className={`${styles.cardFilmeAval} ${fil.cardAnimar}`}
-      style={{ animationDelay: `${Math.min(index * 40, 400)}ms` }}
+      className={`${styles.cardFilmeAval} ${fil.cardComLapis}`}
       onClick={() => router.push(`/filmes/${filme.id}`)}
     >
       <div className={styles.cardFilmeAvalImg}>
@@ -52,14 +50,19 @@ function CardFilme({ item, index, router }) {
             <img src="/envelopecoracao.png" alt="gostei" className={fil.likeBadgeImg} />
           </div>
         )}
+        <button
+          className={fil.btnLapis}
+          onClick={(e) => { e.stopPropagation(); onEditar(item); }}
+          title="Editar log"
+        >
+          <img src="/lapis.png" alt="editar" style={{ width: 14, height: 14, objectFit: 'contain' }} />
+        </button>
       </div>
       <div className={styles.cardFilmeAvalInfo}>
         <p className={styles.cardFilmeAvalTitulo}>{filme.title}</p>
         {estatuetas > 0 && <Estatuetas valor={estatuetas} />}
         {filme.release_date && (
-          <span className={styles.cardFilmeAvalAno}>
-            {filme.release_date.slice(0, 4)}
-          </span>
+          <span className={styles.cardFilmeAvalAno}>{filme.release_date.slice(0, 4)}</span>
         )}
       </div>
     </div>
@@ -70,110 +73,88 @@ export default function PerfilFilmes() {
   const [logs, setLogs] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [usuario, setUsuario] = useState(null);
-  const [gradeKey, setGradeKey] = useState(0); // força re-render para reanimar
+  const [gradeKey, setGradeKey] = useState(0);
+  const [modalEditar, setModalEditar] = useState(null);
   const router = useRouter();
 
   const [ordenacao, setOrdenacao] = useState("recente");
   const [filtroLike, setFiltroLike] = useState(false);
   const [filtroAno, setFiltroAno] = useState("");
   const [filtroGenero, setFiltroGenero] = useState("");
-  
+
   const fotoObj = usuario?.get("foto");
   const foto = (typeof fotoObj?.url === "function" ? fotoObj.url() : fotoObj?._url) || null;
   const bannerObj = usuario?.get("banner");
   const bannerUrl = (typeof bannerObj?.url === "function" ? bannerObj.url() : bannerObj?._url) || null;
   const nome = usuario?.get("nome") || usuario?.get("username") || "";
 
-  // Reinicia animação sempre que filtro muda
   function mudarFiltro(setter, valor) {
     setter(valor);
     setGradeKey((k) => k + 1);
   }
 
-  useEffect(() => {
-    async function carregar() {
-      const user = Parse.User.current();
-      await user.fetch();
-      setUsuario(user);
-      if (!user) { setCarregando(false); return; }
+  async function carregarLogs() {
+    const user = Parse.User.current();
+    await user.fetch();
+    setUsuario(user);
+    if (!user) { setCarregando(false); return; }
 
-      try {
-        const query = new Parse.Query("Log");
-        query.equalTo("usuarioId", user);
-        query.descending("dataAssistido");
-        query.limit(1000);
-        const resultados = await query.find();
+    try {
+      const query = new Parse.Query("Log");
+      query.equalTo("usuarioId", user);
+      query.descending("dataAssistido");
+      query.limit(1000);
+      const resultados = await query.find();
 
-        const comDetalhes = await Promise.allSettled(
-          resultados.map(async (r) => {
-            const filme = await getFilme(r.get("filmeId"));
-            return {
-              filme,
-              estatuetas: r.get("estatuetas") || 0,
-              like: r.get("like") || false,
-              dataAssistido: r.get("dataAssistido"),
-              id: r.id,
-            };
-          })
-        );
+      const comDetalhes = await Promise.allSettled(
+        resultados.map(async (r) => {
+          const filme = await getFilme(r.get("filmeId"));
+          return {
+            filme,
+            estatuetas: r.get("estatuetas") || 0,
+            like: r.get("like") || false,
+            dataAssistido: r.get("dataAssistido"),
+            review: r.get("review") || '',
+            id: r.id,
+            filmeId: r.get("filmeId"),
+          };
+        })
+      );
 
-        setLogs(
-          comDetalhes
-            .filter((r) => r.status === "fulfilled" && r.value.filme)
-            .map((r) => r.value)
-        );
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setCarregando(false);
-      }
+      setLogs(
+        comDetalhes
+          .filter((r) => r.status === "fulfilled" && r.value.filme)
+          .map((r) => r.value)
+      );
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setCarregando(false);
     }
-    carregar();
-  }, []);
+  }
 
-  // Anos de lançamento disponíveis (do filme, não do log)
+  useEffect(() => { carregarLogs(); }, []);
+
   const anosDisponiveis = useMemo(() => {
     const anos = new Set(
-      logs
-        .filter((l) => l.filme?.release_date)
-        .map((l) => l.filme.release_date.slice(0, 4))
+      logs.filter((l) => l.filme?.release_date).map((l) => l.filme.release_date.slice(0, 4))
     );
     return Array.from(anos).sort((a, b) => b - a);
   }, [logs]);
 
-  // Gêneros disponíveis
   const generosDisponiveis = useMemo(() => {
     const generos = new Set();
-    logs.forEach((l) => {
-      l.filme?.genres?.forEach((g) => generos.add(g.name));
-    });
+    logs.forEach((l) => { l.filme?.genres?.forEach((g) => generos.add(g.name)); });
     return Array.from(generos).sort();
   }, [logs]);
 
-  // Logs filtrados e ordenados
   const logsFiltrados = useMemo(() => {
     let lista = [...logs];
-
     if (filtroLike) lista = lista.filter((l) => l.like);
-
-    if (filtroAno) {
-      lista = lista.filter((l) =>
-        l.filme?.release_date?.startsWith(filtroAno)
-      );
-    }
-
-    if (filtroGenero) {
-      lista = lista.filter((l) =>
-        l.filme?.genres?.some((g) => g.name === filtroGenero)
-      );
-    }
-
-    if (ordenacao === "nota_desc") {
-      lista.sort((a, b) => b.estatuetas - a.estatuetas);
-    } else if (ordenacao === "nota_asc") {
-      lista.sort((a, b) => a.estatuetas - b.estatuetas);
-    }
-
+    if (filtroAno) lista = lista.filter((l) => l.filme?.release_date?.startsWith(filtroAno));
+    if (filtroGenero) lista = lista.filter((l) => l.filme?.genres?.some((g) => g.name === filtroGenero));
+    if (ordenacao === "nota_desc") lista.sort((a, b) => b.estatuetas - a.estatuetas);
+    else if (ordenacao === "nota_asc") lista.sort((a, b) => a.estatuetas - b.estatuetas);
     return lista;
   }, [logs, ordenacao, filtroLike, filtroAno, filtroGenero]);
 
@@ -210,63 +191,35 @@ export default function PerfilFilmes() {
           )}
         </div>
 
-        {/* Barra de filtros */}
         <div className={fil.filtrosBar}>
           <div className={fil.filtrosEsq}>
-            <select
-              className={fil.select}
-              value={ordenacao}
-              onChange={(e) => mudarFiltro(setOrdenacao, e.target.value)}
-            >
+            <select className={fil.select} value={ordenacao} onChange={(e) => mudarFiltro(setOrdenacao, e.target.value)}>
               <option value="recente">mais recentes</option>
               <option value="nota_desc">maior nota</option>
               <option value="nota_asc">menor nota</option>
             </select>
-
-            <select
-              className={fil.select}
-              value={filtroAno}
-              onChange={(e) => mudarFiltro(setFiltroAno, e.target.value)}
-            >
+            <select className={fil.select} value={filtroAno} onChange={(e) => mudarFiltro(setFiltroAno, e.target.value)}>
               <option value="">todos os anos</option>
-              {anosDisponiveis.map((ano) => (
-                <option key={ano} value={ano}>{ano}</option>
-              ))}
+              {anosDisponiveis.map((ano) => <option key={ano} value={ano}>{ano}</option>)}
             </select>
-
             {generosDisponiveis.length > 0 && (
-              <select
-                className={fil.select}
-                value={filtroGenero}
-                onChange={(e) => mudarFiltro(setFiltroGenero, e.target.value)}
-              >
+              <select className={fil.select} value={filtroGenero} onChange={(e) => mudarFiltro(setFiltroGenero, e.target.value)}>
                 <option value="">todos os gêneros</option>
-                {generosDisponiveis.map((g) => (
-                  <option key={g} value={g}>{g}</option>
-                ))}
+                {generosDisponiveis.map((g) => <option key={g} value={g}>{g}</option>)}
               </select>
             )}
           </div>
-
           <button
             className={`${fil.btnLike} ${filtroLike ? fil.btnLikeAtivo : ""}`}
             onClick={() => mudarFiltro(setFiltroLike, (v) => !v)}
           >
-            <img
-              src="/envelopecoracao.png"
-              alt="like"
-              className={fil.btnLikeImg}
-              style={{ opacity: filtroLike ? 1 : 0.4 }}
-            />
-            gostei
+            <img src="/envelopecoracao.png" alt="like" className={fil.btnLikeImg} />
           </button>
         </div>
 
         {carregando ? (
           <div className={styles.gradeFilmesAval}>
-            {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className={styles.cardFilmeAvalEsq} />
-            ))}
+            {Array.from({ length: 10 }).map((_, i) => <div key={i} className={styles.cardFilmeAvalEsq} />)}
           </div>
         ) : logsFiltrados.length === 0 ? (
           <div className={styles.vazioWrap}>
@@ -277,12 +230,30 @@ export default function PerfilFilmes() {
           <div key={gradeKey} className={styles.gradeFilmesAval}>
             {logsFiltrados.map((item, index) => (
               <RevealSection key={item.id} delay={Math.min(index * 40, 300)}>
-                <CardFilme item={item} index={0} router={router} />
+                <CardFilme item={item} router={router} onEditar={setModalEditar} />
               </RevealSection>
             ))}
           </div>
         )}
       </div>
+
+      {modalEditar && (
+        <ModalEditarLog
+          logId={modalEditar.id}
+          filmeId={modalEditar.filmeId}
+          dadosIniciais={{
+            data: modalEditar.dataAssistido
+              ? new Date(modalEditar.dataAssistido).toISOString().split('T')[0]
+              : new Date().toISOString().split('T')[0],
+            estatuetas: modalEditar.estatuetas,
+            like: modalEditar.like,
+            review: modalEditar.review,
+          }}
+          onFechar={() => setModalEditar(null)}
+          onSalvo={() => { setModalEditar(null); carregarLogs(); }}
+          onDeletado={() => { setModalEditar(null); carregarLogs(); }}
+        />
+      )}
     </main>
   );
 }

@@ -2,12 +2,13 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.75);
-  z-index: 1000;
+  z-index: 9999;           /* <- alto o suficiente pra cobrir tudo */
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);   /* <- blur no fundo */
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .modal {
@@ -15,14 +16,16 @@
   border: 1px solid #2e2b25;
   border-radius: 12px;
   width: 100%;
-  max-width: 920px;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-width: 780px;
+  height: 85vh;            /* <- altura fixa */
+  overflow-y: auto;        /* <- scroll interno */
+  overflow-x: hidden;
   padding: 28px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   animation: entrar 0.2s ease;
+  position: relative;      /* <- garante que o X fica no lugar */
 }
 
 @keyframes entrar {
@@ -38,14 +41,17 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  font-family: 'Poppins', sans-serif;
 }
 
 .headerSub {
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #7a7568;
+  color: var(--gold);
   margin: 0 0 4px;
+  font-family: 'Poppins', sans-serif;
+  padding-top: 5px;
 }
 
 .headerTitulo {
@@ -110,12 +116,13 @@
 }
 
 .vencedorLabel {
-  font-size: 11px;
+  font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #7a7568;
   margin: 0 0 2px;
   text-align: center;
+  font-family: 'Poppins', sans-serif;
 }
 
 .vencedorNome {
@@ -123,6 +130,7 @@
   color: #c9a84c;
   margin: 0;
   font-weight: 500;
+  font-family: 'Poppins', sans-serif;
   text-align: center;
 }
 
@@ -133,11 +141,12 @@
 }
 
 .secaoLabel {
-  font-size: 11px;
+  font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #7a7568;
   margin: 0;
+  font-family: 'Poppins', sans-serif;
 }
 
 .grade {
@@ -222,6 +231,7 @@
 .cardInfo {
   width: 100%;
   text-align: center;
+  font-family: 'Poppins', sans-serif;
 }
 
 .cardNome {
@@ -256,7 +266,7 @@
   font-size: 13px;
   padding: 10px 12px;
   resize: none;
-  font-family: 'Jost', sans-serif;
+  font-family: 'Poppins', sans-serif;
   box-sizing: border-box;
   outline: none;
   transition: border-color 0.2s;
@@ -264,7 +274,7 @@
 .textarea:focus { border-color: rgba(201, 168, 76, 0.4); }
 .textarea::placeholder { color: #7a7568; }
 
-.mensagem { font-size: 13px; text-align: center; margin: 0; }
+.mensagem { font-size: 13px; text-align: center; margin: 0; font-family: 'Poppins', sans-serif; }
 .sucesso { color: #4caf50; }
 .erro    { color: #DC143C; }
 
@@ -282,7 +292,7 @@
   font-size: 13px;
   padding: 9px 20px;
   cursor: pointer;
-  font-family: 'Jost', sans-serif;
+  font-family: 'Poppins', sans-serif;
   transition: border-color 0.2s, color 0.2s;
 }
 .btnCancelar:hover { border-color: #7a7568; color: #e8e4da; }
@@ -296,7 +306,7 @@
   font-weight: 600;
   padding: 9px 24px;
   cursor: pointer;
-  font-family: 'Jost', sans-serif;
+  font-family: 'Poppins', sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   transition: background 0.2s;
@@ -306,11 +316,11 @@
 
 .btnLog {
   background: transparent;
-  border: 1px solid rgba(201, 168, 76, 0.3);
+  border: 1px solid var(--gold-dark);
   border-radius: 4px;
-  color: rgba(201, 168, 76, 0.6);
-  font-size: 11px;
-  font-family: 'Jost', sans-serif;
+  color: var(--gold-dark);
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: 4px 12px;
@@ -326,6 +336,33 @@
   border-color: #c9a84c;
   color: #c9a84c;
   background: rgba(201, 168, 76, 0.08);
+  font-family: 'Poppins', sans-serif;
+}
+
+.btnDeletar {
+  background: transparent;
+  border: 1px solid rgba(220, 20, 60, 0.3);
+  border-radius: 6px;
+  color: rgba(220, 20, 60, 0.6);
+  font-size: 12px;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnDeletar:hover {
+  border-color: #DC143C;
+  color: #DC143C;
+  background: rgba(220, 20, 60, 0.06);
+}
+
+.btnDeletarConfirmar {
+  border-color: #DC143C !important;
+  color: #fff !important;
+  background: #DC143C !important;
 }
 
 @media (max-width: 700px) {

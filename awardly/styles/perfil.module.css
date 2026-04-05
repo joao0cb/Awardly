@@ -585,7 +585,7 @@
 }
 
 .vazio {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 16px;
   font-style: italic;
   color: rgba(255, 255, 255, 0.3);
@@ -800,8 +800,9 @@
  
 .cardLogCatCategoria {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 20px;
-  font-weight: 600;
+  font-style: italic;
+  font-size: 22px;
+  font-weight: 500;
   color: var(--gold);
   letter-spacing: 0.02em;
 }
@@ -973,6 +974,32 @@
 .revelar.visivel {
   opacity: 1;
   transform: translateY(0);
+}
+
+.cardLogCategoriaComLapis {
+  position: relative;
+}
+ 
+.btnLapisCategoria {
+  background: transparent;
+  border-radius: 999px;
+  border: 0.1px solid var(--gold);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 29px;
+  height: 29px;
+  transition: background 0.2s ease;
+}
+ 
+.btnLapisCategoria:hover {
+  background: rgba(201, 168, 76, 0.1);
+}
+ 
+.btnLapisCategoria:disabled {
+  cursor: not-allowed;
 }
 
 .fadeUp {

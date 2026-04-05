@@ -29,9 +29,19 @@ async function buscarFotoPessoa(nome) {
     const person = data.results?.[0];
     if (person?.profile_path) return `${TMDB_IMAGE}/w185${person.profile_path}`;
     return null;
-  } catch {
+  } catch { return null; }
+}
+
+async function buscarPosterFilme(tmdbId) {
+  if (!tmdbId) return null;
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${TMDB_KEY}&language=pt-BR`
+    );
+    const data = await res.json();
+    if (data?.poster_path) return `${TMDB_IMAGE}/w342${data.poster_path}`;
     return null;
-  }
+  } catch { return null; }
 }
 
 function CardIndicado({ nomeItem, filme, tipo, foto, selecionado, onClick }) {
@@ -43,9 +53,7 @@ function CardIndicado({ nomeItem, filme, tipo, foto, selecionado, onClick }) {
       className={`${styles.cardIndicado} ${selecionado ? styles.selecionado : ''}`}
       onClick={onClick}
     >
-      <div 
-        className={styles.cardImgWrap}
-      >
+      <div className={styles.cardImgWrap}>
         {foto ? (
           <img
             src={foto}
@@ -78,42 +86,51 @@ export default function LogCategoriaModal({ categoria, ano, filmes, onClose }) {
   const [salvando, setSalvando] = useState(false);
   const [mensagem, setMensagem] = useState('');
   const [jaLogado, setJaLogado] = useState(null);
+  const [deletando, setDeletando] = useState(false);
+  const [confirmarDelete, setConfirmarDelete] = useState(false);
 
   useEffect(() => {
     async function montar() {
       const lista = [];
 
       for (const filme of filmes) {
-        const posterUrl = filme.poster
-          ? filme.poster
-          : filme.poster_path
-            ? `${TMDB_IMAGE}/w342${filme.poster_path}`
-            : null;
+        // Busca poster via TMDB pelo tmdbId (resolve o bug dos posters)
+        const posterUrl = filme.poster || await buscarPosterFilme(filme.tmdbId);
 
         if (tipo === 'ator') {
           const atores = filme.atoresIndicados?.[categoria];
           const nomes = Array.isArray(atores) ? atores : atores ? [atores] : [];
           for (const nome of nomes) {
             const foto = await buscarFotoPessoa(nome);
-            lista.push({ nomeItem: nome, filme: filme.titulo, foto, venceu: filme._venceuItem && filme._itemForcado === nome });
+            // Fix: venceu quando vencedores inclui "Categoria::NomeAtor" OU filme._venceuItem com _itemForcado igual
+            const venceu = (filme.vencedores || []).some(
+              v => v === `${categoria}::${nome}` || v === categoria
+            ) && (filme._itemForcado === nome || !filme._itemForcado);
+            lista.push({ nomeItem: nome, filme: filme.titulo, foto, venceu });
           }
         } else if (tipo === 'diretor') {
           const nome = filme.diretor;
           if (nome) {
             const foto = await buscarFotoPessoa(nome);
-            lista.push({ nomeItem: nome, filme: filme.titulo, foto, venceu: filme._venceuItem });
+            const venceu = (filme.vencedores || []).includes(categoria);
+            lista.push({ nomeItem: nome, filme: filme.titulo, foto, venceu });
           }
         } else if (tipo === 'roteiro') {
           const nomes = Array.isArray(filme.roteiristas) ? filme.roteiristas.join(', ') : filme.roteiristas;
-          lista.push({ nomeItem: nomes, filme: filme.titulo, foto: posterUrl, venceu: filme._venceuItem });
+          const venceu = (filme.vencedores || []).includes(categoria);
+          lista.push({ nomeItem: nomes, filme: filme.titulo, foto: posterUrl, venceu });
         } else if (tipo === 'cancao') {
           const cancoes = filme.cancao?.[categoria];
           const nomes = Array.isArray(cancoes) ? cancoes : cancoes ? [cancoes] : [];
           for (const cancao of nomes) {
-            lista.push({ nomeItem: cancao, filme: filme.titulo, foto: posterUrl, venceu: filme._venceuItem && filme._itemForcado === cancao });
+            const venceu = (filme.vencedores || []).some(
+              v => v === `${categoria}::${cancao}` || v === categoria
+            );
+            lista.push({ nomeItem: cancao, filme: filme.titulo, foto: posterUrl, venceu });
           }
         } else {
-          lista.push({ nomeItem: null, filme: filme.titulo, foto: posterUrl, venceu: filme._venceuItem });
+          const venceu = (filme.vencedores || []).includes(categoria);
+          lista.push({ nomeItem: null, filme: filme.titulo, foto: posterUrl, venceu });
         }
       }
 
@@ -123,6 +140,7 @@ export default function LogCategoriaModal({ categoria, ano, filmes, onClose }) {
 
       setIndicados(unicos);
 
+      // Só pré-seleciona o vencedor se não houver log salvo ainda
       const user = Parse.User.current();
       if (!user) return;
 
@@ -136,6 +154,7 @@ export default function LogCategoriaModal({ categoria, ano, filmes, onClose }) {
         setDeveria(existing.get('deveriaTerGanhado'));
         setQueria(existing.get('queriaQueGanhasse'));
         setReview(existing.get('review') || '');
+      } else {
       }
     }
 
@@ -170,7 +189,7 @@ export default function LogCategoriaModal({ categoria, ano, filmes, onClose }) {
       await obj.save();
       setJaLogado(obj);
       setMensagem('Log salvo!');
-      setTimeout(() => onClose(categoria), 800);
+      setTimeout(() => onClose('__salvo__'), 800);
     } catch (e) {
       setMensagem(e.message || 'Erro ao salvar.');
     } finally {
@@ -178,16 +197,28 @@ export default function LogCategoriaModal({ categoria, ano, filmes, onClose }) {
     }
   }
 
+  async function handleDeletar() {
+    if (!confirmarDelete) { setConfirmarDelete(true); return; }
+    setDeletando(true);
+    try {
+      await jaLogado.destroy();
+      onClose('__deletado__');
+    } catch (e) {
+      setMensagem(e.message || 'Erro ao deletar.');
+      setDeletando(false);
+    }
+  }
+
   return (
-    <div className={styles.overlay} onClick={(e) => e.target === e.currentTarget && onClose(undefined)}>
+    <div className={styles.overlay} onClick={(e) => e.target === e.currentTarget && onClose(null)}>
       <div className={styles.modal}>
 
         <div className={styles.header}>
           <div>
-            <p className={styles.headerSub}>{categoria} · {ano}</p>
             <h2 className={styles.headerTitulo}>log da categoria</h2>
+            <p className={styles.headerSub}>{categoria} · {ano}</p>
           </div>
-          <button className={styles.btnFechar} onClick={() => onClose()}>✕</button>
+          <button className={styles.btnFechar} onClick={() => onClose(null)}>✕</button>
         </div>
 
         {vencedorReal && (
@@ -212,15 +243,9 @@ export default function LogCategoriaModal({ categoria, ano, filmes, onClose }) {
           <p className={styles.secaoLabel}>quem deveria ter ganhado?</p>
           <div className={styles.grade}>
             {indicados.map((ind, i) => (
-              <CardIndicado
-                key={i}
-                tipo={tipo}
-                nomeItem={ind.nomeItem}
-                filme={ind.filme}
-                foto={ind.foto}
-                selecionado={deveria === (ind.nomeItem ?? ind.filme)}
-                onClick={() => setDeveria(ind.nomeItem ?? ind.filme)}
-              />
+              <CardIndicado key={i} tipo={tipo} nomeItem={ind.nomeItem} filme={ind.filme}
+                foto={ind.foto} selecionado={deveria === (ind.nomeItem ?? ind.filme)}
+                onClick={() => setDeveria(ind.nomeItem ?? ind.filme)} />
             ))}
           </div>
         </div>
@@ -229,29 +254,18 @@ export default function LogCategoriaModal({ categoria, ano, filmes, onClose }) {
           <p className={styles.secaoLabel}>quem você queria que ganhasse?</p>
           <div className={styles.grade}>
             {indicados.map((ind, i) => (
-              <CardIndicado
-                key={i}
-                tipo={tipo}
-                nomeItem={ind.nomeItem}
-                filme={ind.filme}
-                foto={ind.foto}
-                selecionado={queria === (ind.nomeItem ?? ind.filme)}
-                onClick={() => setQueria(ind.nomeItem ?? ind.filme)}
-              />
+              <CardIndicado key={i} tipo={tipo} nomeItem={ind.nomeItem} filme={ind.filme}
+                foto={ind.foto} selecionado={queria === (ind.nomeItem ?? ind.filme)}
+                onClick={() => setQueria(ind.nomeItem ?? ind.filme)} />
             ))}
           </div>
         </div>
 
         <div className={styles.secao}>
           <p className={styles.secaoLabel}>review</p>
-          <textarea
-            className={styles.textarea}
-            rows={3}
+          <textarea className={styles.textarea} rows={3}
             placeholder="Escreva sua opinião sobre essa categoria..."
-            value={review}
-            onChange={(e) => setReview(e.target.value)}
-            maxLength={500}
-          />
+            value={review} onChange={(e) => setReview(e.target.value)} maxLength={500} />
         </div>
 
         {mensagem && (
@@ -261,10 +275,20 @@ export default function LogCategoriaModal({ categoria, ano, filmes, onClose }) {
         )}
 
         <div className={styles.acoes}>
-          <button className={styles.btnCancelar} onClick={() => onClose()}>cancelar</button>
-          <button className={styles.btnSalvar} onClick={handleSalvar} disabled={salvando}>
-            {salvando ? 'salvando...' : jaLogado ? 'atualizar log' : 'salvar log'}
-          </button>
+          {jaLogado && (
+            <button
+              className={`${styles.btnDeletar} ${confirmarDelete ? styles.btnDeletarConfirmar : ''}`}
+              onClick={handleDeletar} disabled={deletando}
+            >
+              {deletando ? 'excluindo...' : confirmarDelete ? 'confirmar exclusão' : 'excluir log'}
+            </button>
+          )}
+          <div style={{ display: 'flex', gap: 10, marginLeft: 'auto' }}>
+            <button className={styles.btnCancelar} onClick={() => onClose(null)}>cancelar</button>
+            <button className={styles.btnSalvar} onClick={handleSalvar} disabled={salvando}>
+              {salvando ? 'salvando...' : jaLogado ? 'atualizar log' : 'salvar log'}
+            </button>
+          </div>
         </div>
 
       </div>

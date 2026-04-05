@@ -53,7 +53,7 @@
 }
 
 .headerLabel {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 16px;
   font-weight: 300;
   font-style: italic;
@@ -119,8 +119,9 @@
   border: none;
   outline: none;
   font-size: 15px;
-  color: var(--text);
+  color: var(--gold);
   font-family: inherit;
+  font-family: 'Poppins', sans-serif;
 }
 
 .inputBusca::placeholder {
@@ -131,6 +132,7 @@
   overflow-y: auto;
   max-height: 360px;
   flex: 1;
+  font-family: 'Poppins', sans-serif;
 }
 
 .msg {
@@ -139,6 +141,7 @@
   color: rgba(255,255,255,0.3);
   font-style: italic;
   text-align: center;
+  font-family: 'Poppins', sans-serif;
 }
 
 .msgDica {
@@ -146,7 +149,7 @@
   font-size: 13px;
   color: rgba(255,255,255,0.2);
   text-align: center;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-style: italic;
 }
 
@@ -173,8 +176,8 @@
 }
 
 .resultadoNome {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text);
 }
@@ -241,7 +244,7 @@
 }
 
 .filmeNome {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 20px;
   font-weight: 600;
   color: var(--text);
@@ -252,6 +255,7 @@
   font-size: 12px;
   color: var(--gold);
   letter-spacing: 0.06em;
+  font-family: 'Poppins', sans-serif;
 }
 
 .filmeSinopse {
@@ -259,6 +263,7 @@
   color: rgba(255,255,255,0.35);
   line-height: 1.5;
   margin-top: 4px;
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Campos */
@@ -269,7 +274,7 @@
 }
 
 .label {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -315,15 +320,15 @@
 .estatuetasWrap {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
   cursor: pointer;
   user-select: none;
 }
 
 .estatuetaSlot {
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -331,13 +336,13 @@
 
 .estatuetaMeia {
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
 }
 
 .estatuetaImg {
-  width: 28px;
-  height: 28px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
   transition: transform 0.1s ease;
   position: absolute;
@@ -365,7 +370,6 @@
 .btnLike {
   display: flex;
   align-items: center;
-  gap: 8px;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 2px;
@@ -373,8 +377,6 @@
   cursor: pointer;
   transition: border-color 0.2s ease, background 0.2s ease;
   color: rgba(255,255,255,0.4);
-  font-size: 13px;
-  font-family: inherit;
 }
 
 .btnLike:hover {
@@ -385,7 +387,6 @@
 .btnLikeAtivo {
   border-color: var(--gold);
   background: rgba(201, 168, 76, 0.08);
-  color: var(--gold);
 }
 
 .envelopeImg {
@@ -398,6 +399,7 @@
 .textarea {
   background: var(--card-bg);
   border: 1px solid var(--border);
+  font-family: 'Poppins', sans-serif;
   border-radius: 2px;
   padding: 10px 12px;
   font-size: 13px;

@@ -141,9 +141,15 @@ export default function Categorias() {
     setModalAberto({ categoria: cat, filmes: filmesCategoria });
   }
 
-  function handleFecharModal(categoriaSalva) {
-    if (categoriaSalva) {
-      setLogsFeitos(prev => new Set([...prev, categoriaSalva]));
+  function handleFecharModal(resultado) {
+    if (resultado === '__salvo__') {
+      setLogsFeitos(prev => new Set([...prev, modalAberto.categoria]));
+    } else if (resultado === '__deletado__') {
+      setLogsFeitos(prev => {
+        const next = new Set(prev);
+        next.delete(modalAberto.categoria);
+        return next;
+      });
     }
     setModalAberto(null);
   }
@@ -209,7 +215,7 @@ export default function Categorias() {
           categoria={modalAberto.categoria}
           ano={anoSelecionado}
           filmes={modalAberto.filmes}
-          onClose={() => setModalAberto(null)}
+          onClose={handleFecharModal}
         />
       )}
     </div>

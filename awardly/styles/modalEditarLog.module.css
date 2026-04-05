@@ -1,0 +1,40 @@
+.acoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.btnDeletar {
+  background: transparent;
+  border: 1px solid rgba(220, 20, 60, 0.3);
+  border-radius: 6px;
+  color: rgba(220, 20, 60, 0.6);
+  font-size: 12px;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnDeletar:hover {
+  border-color: #DC143C;
+  color: #DC143C;
+  background: rgba(220, 20, 60, 0.06);
+}
+
+.btnDeletarConfirmar {
+  border-color: #DC143C !important;
+  color: #fff !important;
+  background: #DC143C !important;
+}
+
+.btnDeletarConfirmar:hover {
+  background: #b01030 !important;
+}
+
+/* ── lápis no card de filme ── */
+/* adiciona no filmesPerfil.module.css */

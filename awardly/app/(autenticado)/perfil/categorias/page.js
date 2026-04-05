@@ -33,29 +33,32 @@ export default function PerfilCategorias() {
   const bannerUrl = (typeof bannerObj?.url === "function" ? bannerObj.url() : bannerObj?._url) || null;
   const nome = usuario?.get("nome") || usuario?.get("username") || "";
 
+  async function carregarLogs(user) {
+    const query = new Parse.Query("LogCategoria");
+    query.equalTo("usuarioId", user);
+    query.descending("createdAt");
+    query.limit(200);
+    const resultados = await query.find();
+    setLogs(resultados.map((l) => ({
+      id: l.id,
+      categoria: l.get("categoria"),
+      ano: l.get("ano"),
+      vencedorReal: l.get("vencedorReal"),
+      deveriaTerGanhado: l.get("deveriaTerGanhado"),
+      queriaQueGanhasse: l.get("queriaQueGanhasse"),
+      review: l.get("review"),
+      data: tempoRelativo(l.createdAt),
+    })));
+  }
+
   useEffect(() => {
     async function carregar() {
       const user = Parse.User.current();
       await user.fetch();
       setUsuario(user);
       if (!user) { setCarregando(false); return; }
-
       try {
-        const query = new Parse.Query("LogCategoria");
-        query.equalTo("usuarioId", user);
-        query.descending("createdAt");
-        query.limit(200);
-        const resultados = await query.find();
-        setLogs(resultados.map((l) => ({
-          id: l.id,
-          categoria: l.get("categoria"),
-          ano: l.get("ano"),
-          vencedorReal: l.get("vencedorReal"),
-          deveriaTerGanhado: l.get("deveriaTerGanhado"),
-          queriaQueGanhasse: l.get("queriaQueGanhasse"),
-          review: l.get("review"),
-          data: tempoRelativo(l.createdAt),
-        })));
+        await carregarLogs(user);
       } catch (e) {
         console.error(e);
       } finally {
@@ -152,7 +155,13 @@ export default function PerfilCategorias() {
             {logsFiltrados.map((l, index) => (
               <RevealSection key={l.id} delay={Math.min(index * 60, 300)}>
                 <div className={cat.cardAnimar}>
-                  <CardLogCategoria log={l} />
+                  <CardLogCategoria
+                    log={l}
+                    onAtualizado={() => {
+                      const user = Parse.User.current();
+                      if (user) carregarLogs(user);
+                    }}
+                  />
                 </div>
               </RevealSection>
             ))}

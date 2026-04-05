@@ -130,7 +130,6 @@ function BotaoLike({ ativo, onChange }) {
         alt={ativo ? "Gostei" : "Gostei?"}
         className={styles.envelopeImg}
       />
-      <span>{ativo ? "gostei" : "gostei?"}</span>
     </button>
   );
 }
