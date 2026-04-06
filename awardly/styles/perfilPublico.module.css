@@ -123,6 +123,7 @@
   cursor: pointer;
   margin-bottom: -1px;
   transition: color 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap; /* Garante que o texto da aba não quebre linha */
 }
 
 .abaSeg:hover {
@@ -236,8 +237,45 @@
   margin-top: 5px;
 }
 
+/* ===================== RESPONSIVIDADE ===================== */
+
 @media (max-width: 600px) {
   .paginaSeguidores {
     padding: 32px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .paginaSeguidores {
+    padding: 24px 16px;
+  }
+
+  /* Permite scroll horizontal nas abas se não couberem na tela */
+  .abasSeguidores {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .abasSeguidores::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Diminui um pouco a foto para dar mais espaço ao texto e botão */
+  .cardUsuarioFoto,
+  .cardUsuarioAvatarPlaceholder {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  /* Ajusta o botão para telas muito pequenas */
+  .btnSeguir,
+  .btnSeguindo {
+    padding: 6px 16px;
+    font-size: 11px;
+  }
+
+  .cardUsuarioNome {
+    font-size: 15px;
   }
 }

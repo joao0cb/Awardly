@@ -59,6 +59,16 @@
   overflow: hidden;
 }
 
+.bannerImg {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  object-position: center 30%;
+  display: block;
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+}
+
 .bannerWrap::after {
   content: '';
   position: absolute;
@@ -217,7 +227,7 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: rgba(255, 255, 255, 0.4);
-  text-align: center; /* ← adiciona isso */
+  text-align: center;
 }
 
 /* ===================== TABS ===================== */
@@ -229,7 +239,7 @@
   display: flex;
   gap: 0;
   border-bottom: 1px solid var(--border);
-  justify-content: center; /* ← adiciona isso */
+  justify-content: center;
 }
 
 .tab {
@@ -243,6 +253,7 @@
   border-bottom: 2px solid transparent;
   transition: color 0.2s ease, border-color 0.2s ease;
   margin-bottom: -1px;
+  white-space: nowrap;
 }
 
 .tab:hover {
@@ -269,6 +280,111 @@
   font-style: italic;
   color: var(--text);
   letter-spacing: 0.02em;
+}
+
+.conteudoFullHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+ 
+.conteudoCount {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.06em;
+  font-family: 'Poppins', sans-serif;
+}
+ 
+/* Vazio com dica */
+.vazioWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 60px 0;
+}
+ 
+.vazioDica {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.2);
+  font-style: italic;
+}
+
+.vazio {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.3);
+  text-align: center;
+  padding: 60px 0;
+}
+
+.esqueletoPage {
+  width: 100%;
+  height: 400px;
+}
+
+/* ===================== GERAL FILMES / ICONS ===================== */
+
+.cardFilmeLike {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8));
+}
+
+.estatuetasRow {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+ 
+.estatuetaMiniSlot {
+  position: relative;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+ 
+.estatuetaMini {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  margin-left: -13px;
+}
+ 
+.estatuetaMiniValor {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  color: var(--gold);
+  margin-left: 4px;
+  font-weight: 600;
+}
+
+.filmeVistoNota {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 4px;
+}
+ 
+.filmeVistoOscar {
+  width: 19px;
+  height: 19px;
+  object-fit: contain;
+}
+ 
+.filmeVistoNota span {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  color: var(--gold);
+  font-weight: 600;
 }
 
 /* ===================== FILMES FAVORITOS ===================== */
@@ -404,6 +520,35 @@
   animation: esqPulse 1.8s infinite;
 }
 
+.btnRemoverWatch {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(10, 9, 6, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.cardFilmeAvalImg:hover .btnRemoverWatch {
+  opacity: 1;
+}
+
+.btnRemoverWatch:hover {
+  background: rgba(180, 60, 60, 0.9);
+  border-color: transparent;
+  color: #fff;
+}
+
 /* ===================== REVIEWS ===================== */
 
 .listaReviews {
@@ -493,6 +638,18 @@
   margin-top: auto;
 }
 
+.reviewAcoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+ 
+.reviewEnvelope {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
 .reviewCardEsq {
   height: 100px;
   border-radius: 3px;
@@ -506,7 +663,7 @@
 .listaAtividade {
   display: flex;
   flex-direction: column;
-  width: 370px;
+  width: 100%;
   gap: 0;
 }
 
@@ -520,6 +677,18 @@
 
 .atividadeItem:last-child {
   border-bottom: none;
+}
+
+.atividadeItemClicavel {
+  cursor: pointer;
+  transition: background 0.15s ease;
+  padding: 12px; 
+  margin: 0 -12px;
+}
+
+.atividadeItemClicavel:hover {
+  background: rgba(201, 168, 76, 0.04);
+  border-radius: 3px;
 }
 
 .atividadeIcone {
@@ -554,223 +723,19 @@
   color: rgba(255, 255, 255, 0.25);
 }
 
-.btnRemoverWatch {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(10, 9, 6, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.2s ease, background 0.2s ease;
+.atividadeSeta {
+  color: rgba(201, 168, 76, 0.4);
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
 }
 
-.cardFilmeAvalImg:hover .btnRemoverWatch {
-  opacity: 1;
-}
-
-.btnRemoverWatch:hover {
-  background: rgba(180, 60, 60, 0.9);
-  border-color: transparent;
-  color: #fff;
-}
-
-.vazio {
-  font-family: 'Poppins', sans-serif;
-  font-size: 16px;
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.3);
-  text-align: center;
-  padding: 60px 0;
-}
-
-.esqueletoPage {
-  width: 100%;
-  height: 400px;
-}
-
-@keyframes esqPulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.7; }
-}
-
-@media (max-width: 900px) {
-  .conteudo {
-    grid-template-columns: 1fr;
-    padding: 32px 24px;
-  }
-
-  .conteudoFull {
-    padding: 32px 24px;
-  }
-
-  .headerPerfil {
-    padding: 0 24px;
-    flex-wrap: wrap;
-  }
-
-  .estatRow {
-    padding: 0 24px;
-    flex-wrap: wrap;
-  }
-
-  .tabs {
-    padding: 0 24px;
-    overflow-x: auto;
-  }
-
-  .gradeFilmesFav {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .gradeFilmesAval {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .sidebar {
-    position: static;
-  }
-}
-
-@media (max-width: 560px) {
-  .gradeFilmesFav {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .gradeFilmesAval {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .nomeUsuario {
-    font-size: 22px;
-  }
-}
-
-.conteudoFullHeader {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 24px;
-}
- 
-.conteudoCount {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.3);
-  letter-spacing: 0.06em;
-  font-family: 'Poppins', sans-serif;
-}
- 
-/* Vazio com dica */
-.vazioWrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 60px 0;
-}
- 
-.vazioDica {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.2);
-  font-style: italic;
-}
- 
-/* Like no card de filme */
-.cardFilmeLike {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8));
-}
- 
-/* Estatuetas mini (na grade de filmes e reviews) */
-.estatuetasRow {
-  display: flex;
-  align-items: center;
-  gap: 1px;
-}
- 
-.estatuetaMiniSlot {
-  position: relative;
-  width: 25px;
-  height: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-}
- 
-.estatuetaMini {
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
-  margin-left: -13px;
-}
- 
-.estatuetaMiniValor {
-  font-family: 'Poppins', sans-serif;
-  font-size: 12px;
+.atividadeItemClicavel:hover .atividadeSeta {
   color: var(--gold);
-  margin-left: 4px;
-  font-weight: 600;
-}
- 
-/* Review — envelope e ações */
-.reviewAcoes {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
- 
-.reviewEnvelope {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
 }
 
-.bannerImg {
-  width: 100%;
-  height: 350px;
-  object-fit: cover;
-  object-position: center 30%;
-  display: block;
-  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-}
+/* ===================== CARDS DE LOG DE CATEGORIA ===================== */
 
-.filmeVistoNota {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  margin-top: 4px;
-}
- 
-.filmeVistoOscar {
-  width: 19px;
-  height: 19px;
-  object-fit: contain;
-}
- 
-.filmeVistoNota span {
-  font-family: 'Poppins', sans-serif;
-  font-size: 12px;
-  color: var(--gold);
-  font-weight: 600;
-}
- 
-/* ── Cards de log de categoria ── */
- 
 .listaLogsCat {
   display: flex;
   flex-direction: column;
@@ -787,6 +752,10 @@
   flex-direction: column;
   gap: 10px;
   transition: border-color 0.2s ease;
+}
+
+.cardLogCategoriaComLapis {
+  position: relative;
 }
  
 .cardLogCategoria:hover {
@@ -850,7 +819,6 @@
   border-left: 2px solid rgba(201, 168, 76, 0.3);
   padding-left: 10px;
   margin-top: 4px;
-  line-height: 1.6;
   word-break: break-word;
   overflow-wrap: break-word;
   white-space: normal;
@@ -862,39 +830,57 @@
   color: rgba(255, 255, 255, 0.2);
 }
 
-.atividadeItemClicavel {
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.atividadeItemClicavel:hover {
-  background: rgba(201, 168, 76, 0.04);
-  border-radius: 3px;
-}
-
-.atividadeSeta {
-  color: rgba(201, 168, 76, 0.4);
-  font-size: 14px;
-  flex-shrink: 0;
-  transition: color 0.15s ease;
-}
-
-.atividadeItemClicavel:hover .atividadeSeta {
-  color: var(--gold);
-}
-
 .cardLogCatFotos {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
 }
+
+.cardLogCatConcorda {
+  font-size: 11px;
+  color: rgba(201, 168, 76, 0.6);
+  letter-spacing: 0.04em;
+}
+
+.btnLapisCategoria {
+  background: transparent;
+  border-radius: 999px;
+  border: 0.1px solid var(--gold);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 29px;
+  height: 29px;
+  transition: background 0.2s ease;
+}
  
+.btnLapisCategoria:hover {
+  background: rgba(201, 168, 76, 0.1);
+}
+ 
+.btnLapisCategoria:disabled {
+  cursor: not-allowed;
+}
+
+/* ===================== MINI CARDS FOTOS ===================== */
+
 .miniCard {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
   width: 135px;
+}
+
+.miniCardClicavel:hover .miniCardImg {
+  outline: 1px solid var(--gold);
+}
+
+.miniCardClicavel:hover .miniCardNome {
+  color: var(--gold);
+  transition: color 0.2s ease;
 }
  
 .miniCardHighlight .miniCardNome {
@@ -907,6 +893,7 @@
   border: 1px solid var(--border);
   background: var(--card-bg);
   position: relative;
+  transition: outline 0.2s ease;
 }
  
 .miniCardHighlight .miniCardImg {
@@ -915,6 +902,8 @@
  
 .miniCardImg img {
   display: block;
+  width: 100%;
+  border-radius: 3px;
 }
  
 .miniCardPlaceholder {
@@ -954,21 +943,8 @@
   line-height: 1.3;
   word-break: break-word;
 }
- 
-.cardLogCatConcorda {
-  font-size: 11px;
-  color: rgba(201, 168, 76, 0.6);
-  letter-spacing: 0.04em;
-}
 
-.miniCardClicavel:hover .miniCardImg {
-  outline: 1px solid var(--gold);
-}
-
-.miniCardClicavel:hover .miniCardNome {
-  color: var(--gold);
-  transition: color 0.2s ease;
-}
+/* ===================== ANIMAÇÕES ===================== */
 
 .revelar {
   opacity: 0;
@@ -981,32 +957,6 @@
   transform: translateY(0);
 }
 
-.cardLogCategoriaComLapis {
-  position: relative;
-}
- 
-.btnLapisCategoria {
-  background: transparent;
-  border-radius: 999px;
-  border: 0.1px solid var(--gold);
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 29px;
-  height: 29px;
-  transition: background 0.2s ease;
-}
- 
-.btnLapisCategoria:hover {
-  background: rgba(201, 168, 76, 0.1);
-}
- 
-.btnLapisCategoria:disabled {
-  cursor: not-allowed;
-}
-
 .fadeUp {
   animation: fadeUpGeral 0.9s ease both;
 }
@@ -1014,4 +964,126 @@
 @keyframes fadeUpGeral {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes esqPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+
+/* ============================================================
+   MEDIA QUERIES - RESPONSIVIDADE
+============================================================ */
+
+@media (max-width: 900px) {
+  .conteudo, .conteudoFull {
+    padding: 32px 24px;
+  }
+
+  .conteudo {
+    grid-template-columns: 1fr;
+  }
+
+  .headerPerfil {
+    padding: 0 24px;
+    flex-wrap: wrap; /* Garante que os botões caiam para a linha de baixo alinhados à esquerda se apertar */
+  }
+
+  .estatRow, .tabs {
+    padding: 0 24px;
+    flex-wrap: wrap;
+  }
+
+  .tabs {
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gradeFilmesFav, .gradeFilmesAval {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .gradeFilmesAval {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .reviewCard {
+    padding: 14px;
+  }
+
+  .reviewPoster {
+    width: 120px;
+  }
+}
+
+@media (max-width: 560px) {
+  /* O headerPerfil aqui volta ao normal, apenas abaixa a div para encaixar no banner */
+  .headerPerfil {
+    transform: translateY(-30px);
+  }
+
+  .avatar, .avatarPlaceholder {
+    width: 80px;
+    height: 80px;
+    font-size: 30px;
+  }
+
+  .nomeUsuario {
+    font-size: 24px;
+  }
+
+  .gradeFilmesFav {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .gradeFilmesAval {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .estatRow {
+    flex-wrap: wrap;
+    border-bottom: none;
+  }
+
+  .estatCard {
+    flex: 1 1 40%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .estatCard:nth-child(odd) {
+    border-right: 1px solid var(--border);
+  }
+
+  .reviewCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reviewPoster {
+    width: 100px;
+    align-self: center;
+    margin-bottom: 8px;
+  }
+  
+  .miniCard {
+    width: calc(50% - 6px); 
+  }
+}
+
+@media (max-width: 480px) {
+  .gradeFilmesFav {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
