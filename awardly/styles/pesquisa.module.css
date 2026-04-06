@@ -82,7 +82,7 @@
 }
 
 .cardTitulo {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 600;
   color: var(--text);
@@ -90,9 +90,10 @@
 }
 
 .cardAno {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--gold);
   letter-spacing: 0.06em;
+  font-family: 'Poppins', sans-serif;
 }
 
 .cardCategorias {
@@ -100,6 +101,7 @@
   flex-wrap: wrap;
   gap: 4px;
   margin-top: 2px;
+  font-family: 'Poppins', sans-serif;
 }
 
 .cardTag {
@@ -113,11 +115,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 120px;
+  font-family: 'Poppins', sans-serif;
 }
 
 .cardTagMais {
-  font-size: 10px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.25);
+  font-family: 'Poppins', sans-serif;
 }
 
 /* ── Vazio ── */
@@ -152,7 +156,7 @@
   font-size: 16px;
   font-weight: 300;
   font-style: italic;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--gold);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: 16px;
