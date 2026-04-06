@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 import { useRouter } from "next/navigation";
-import Parse from '@/lib/parseClient';
+import Parse from '@/lib/parseClient.js';
 import styles from "@/styles/login.module.css";
-import DarkVeil from "@/app/components/DarkVeil";
+import DarkVeil from "@/app/components/DarkVeil.js";
 
 export default function Home() {
   const router = useRouter();
