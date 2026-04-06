@@ -54,7 +54,32 @@
 .direita {
   display: flex;
   align-items: center;
+  gap: 24px;
+}
+
+.menuNav {
+  display: flex;
+  align-items: center;
   gap: 36px;
+}
+
+.btnHamburger {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #aaa496;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.btnHamburger:hover {
+  color: var(--gold);
+}
+
+.btnHamburger svg {
+  width: 24px;
+  height: 24px;
 }
 
 .linkNav {
@@ -73,6 +98,26 @@
 
 .linkNav:hover {
   color: var(--gold);
+}
+
+.btnLog {
+  padding: 6px 16px;
+  border: 1px solid var(--gold);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--gold);
+  font-family: 'Poppins', sans-serif; 
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+ 
+.btnLog:hover {
+  background: var(--gold);
+  color: #0a0906;
 }
 
 .pesquisaWrapper {
@@ -201,42 +246,65 @@
   color: var(--gold);
 }
 
-.btnLog {
-  padding: 6px 16px;
-  border: 1px solid var(--gold);
-  border-radius: 2px;
-  background: transparent;
-  color: var(--gold);
-  font-family: 'Poppins', sans-serif; 
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
-  white-space: nowrap;
-}
- 
-.btnLog:hover {
-  background: var(--gold);
-  color: #0a0906;
+@media (max-width: 850px) {
+  .direita {
+    gap: 16px;
+  }
+  
+  .menuNav {
+    gap: 20px;
+  }
 }
 
 @media (max-width: 768px) {
-  .navbar {
-    padding: 0 20px;
-  }
-
-  .direita {
-    gap: 20px;
+  .navbarInterna {
+    padding: 0 24px;
   }
 
   .nomeUsuario {
     display: none;
   }
+
+  .btnHamburger {
+    display: flex;
+    order: -1;
+  }
+
+  .menuNav {
+    position: absolute;
+    top: 68px;
+    left: 0;
+    width: 100%;
+    background: #0a0906;
+    flex-direction: column;
+    padding: 20px 0;
+    gap: 24px;
+    border-bottom: 1px solid var(--border);
+    transform: translateY(-150%);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease-in-out;
+    z-index: -1; 
+  }
+
+  .menuNav.menuAberto {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
+  }
+
+  .pesquisaAberta {
+    width: 140px;
+  }
 }
 
 @media (max-width: 480px) {
-  .linkNav {
-    display: none;
+  .navbarInterna {
+    padding: 0 16px;
+  }
+  
+  .logoNome {
+    font-size: 28px;
   }
 }
