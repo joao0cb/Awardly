@@ -34,7 +34,7 @@ export function useFilmes(ano = null) {
               .map((p) => p.name)
               .join(', ') || null;
 
-            const JOBS_ROTEIRISTA = ['Screenplay', 'Story', 'Writer', 'Original Story', 'Idea'];
+            const JOBS_ROTEIRISTA = ['Screenplay', 'Story', 'Writer', 'Original Story'];
 
             const roteiristas = creditos.crew
               ?.filter((p) => JOBS_ROTEIRISTA.includes(p.job))
