@@ -311,6 +311,15 @@ export default function ModalLog({ onFechar, onSalvo, filmePreSelecionado = null
       log.setACL(acl);
 
       await log.save();
+      try {
+        const qWatch = new Parse.Query("Watchlist");
+        qWatch.equalTo("usuarioId", user);
+        qWatch.equalTo("filmeId", Number(filmeSelecionado.tmdbId));
+        const itemWatch = await qWatch.first();
+        if (itemWatch) await itemWatch.destroy();
+      } catch (e) {
+        console.error("Erro ao remover da watchlist:", e);
+      }
       onSalvo?.();
       onFechar();
     } catch (e) {

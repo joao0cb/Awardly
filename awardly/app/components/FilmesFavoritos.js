@@ -87,6 +87,7 @@ function Quadradinho({ filme, indice, onClick }) {
           <div className={styles.quadradoOverlay}>
             <span className={styles.quadradoTitulo}>{filme.titulo}</span>
             <button
+              type="button"
               className={styles.btnRemover}
               onClick={(e) => { e.stopPropagation(); onClick(true); }}
             >
