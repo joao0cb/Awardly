@@ -435,7 +435,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text);
   font-family: 'Poppins', sans-serif;
 }
@@ -681,7 +681,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 22px;
   color: rgba(255,255,255,0.2);
   background: var(--card-bg);

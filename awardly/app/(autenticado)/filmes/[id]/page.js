@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Parse from '@/lib/parseClient';
 import { getFilme, getFilmeCreditos, getFilmeImagens, getImageURL } from '@/lib/tmdb';
 import '@/styles/filmeUnico.css';
+import ModalEditarLog from '@/app/components/ModalEditarLog';
 
 async function verificarWatchlist(tmdbId) {
   const user = Parse.User.current();
@@ -125,6 +126,13 @@ function PainelLog({ onSalvo, onFechar, tmdbId }) {
       acl.setWriteAccess(user, true);
       log.setACL(acl);
       await log.save();
+      try {
+        const qWatch = new Parse.Query('Watchlist');
+        qWatch.equalTo('usuarioId', user);
+        qWatch.equalTo('filmeId', Number(tmdbId));
+        const itemWatch = await qWatch.first();
+        if (itemWatch) await itemWatch.destroy();
+      } catch {}
       setSalvo(true);
       onSalvo?.();
       setTimeout(() => onFechar(), 1400);
@@ -201,6 +209,7 @@ export default function FilmeUnico({ params }) {
   const [logAberto, setLogAberto] = useState(false);
   const [usuario, setUsuario] = useState(null);
   const [imagemAberta, setImagemAberta] = useState(null);
+  const [logExistente, setLogExistente] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -263,6 +272,23 @@ export default function FilmeUnico({ params }) {
         if (user) {
           const estaNA = await verificarWatchlist(id);
           setNaWatchlist(estaNA);
+
+          const qLog = new Parse.Query('Log');
+          qLog.equalTo('usuarioId', user);
+          qLog.equalTo('filmeId', Number(id));
+          qLog.descending('createdAt');
+          const logRecente = await qLog.first();
+          if (logRecente) {
+            setLogExistente({
+              id: logRecente.id,
+              data: logRecente.get('dataAssistido')
+                ? new Date(logRecente.get('dataAssistido')).toISOString().split('T')[0]
+                : new Date().toISOString().split('T')[0],
+              estatuetas: logRecente.get('estatuetas') || 0,
+              like: logRecente.get('like') || false,
+              review: logRecente.get('review') || '',
+            });
+          }
         }
       } catch (e) {
         console.error(e);
@@ -285,9 +311,6 @@ export default function FilmeUnico({ params }) {
       setSalvandoWatch(false);
     }
   }
-
-  const nome = usuario?.get('nome') || usuario?.get('username') || '';
-  const foto = usuario?.get('foto')?._url || null;
 
   if (loading) return (
     <div className="filme-unico">
@@ -324,15 +347,73 @@ export default function FilmeUnico({ params }) {
                 )}
               </div>
               <div className="acoes">
-                <button onClick={() => setLogAberto(!logAberto)} className={logAberto ? 'btn-ativo' : ''}>
-                  {logAberto ? '✕ cancelar' : '+ registrar'}
+                <button
+                  onClick={() => setLogAberto(!logAberto)}
+                  className={logAberto ? 'btn-ativo' : ''}
+                >
+                  {logAberto ? '✕ cancelar' : logExistente ? '✎ editar log' : '+ registrar'}
                 </button>
                 <button onClick={handleWatchlist} disabled={salvandoWatch} className={naWatchlist ? 'btn-watchlist-ativo' : ''}>
                   {naWatchlist ? '✓ na watchlist' : '+ watchlist'}
                 </button>
               </div>
             </div>
-            {logAberto && <PainelLog tmdbId={filme.tmdbId} onFechar={() => setLogAberto(false)} onSalvo={() => {}} />}
+            {logAberto && (
+              logExistente ? (
+                <ModalEditarLog
+                  logId={logExistente.id}
+                  filmeId={Number(id)}
+                  dadosIniciais={logExistente}
+                  onFechar={() => setLogAberto(false)}
+                  onSalvo={() => {
+                    setLogAberto(false);
+                    // recarrega o log atualizado
+                    const user = Parse.User.current();
+                    const qLog = new Parse.Query('Log');
+                    qLog.equalTo('usuarioId', user);
+                    qLog.equalTo('filmeId', Number(id));
+                    qLog.descending('createdAt');
+                    qLog.first().then(l => {
+                      if (l) setLogExistente({
+                        id: l.id,
+                        data: l.get('dataAssistido') ? new Date(l.get('dataAssistido')).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                        estatuetas: l.get('estatuetas') || 0,
+                        like: l.get('like') || false,
+                        review: l.get('review') || '',
+                      });
+                    });
+                  }}
+                  onDeletado={() => {
+                    setLogAberto(false);
+                    setLogExistente(null);
+                    setNaWatchlist(false);
+                  }}
+                />
+              ) : (
+                <PainelLog
+                  tmdbId={filme.tmdbId}
+                  onFechar={() => setLogAberto(false)}
+                  onSalvo={() => {
+                    setNaWatchlist(false);
+                    // marca como logado
+                    const user = Parse.User.current();
+                    const qLog = new Parse.Query('Log');
+                    qLog.equalTo('usuarioId', user);
+                    qLog.equalTo('filmeId', Number(id));
+                    qLog.descending('createdAt');
+                    qLog.first().then(l => {
+                      if (l) setLogExistente({
+                        id: l.id,
+                        data: l.get('dataAssistido') ? new Date(l.get('dataAssistido')).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                        estatuetas: l.get('estatuetas') || 0,
+                        like: l.get('like') || false,
+                        review: l.get('review') || '',
+                      });
+                    });
+                  }}
+                />
+              )
+            )}
           </div>
         </div>
       </div>

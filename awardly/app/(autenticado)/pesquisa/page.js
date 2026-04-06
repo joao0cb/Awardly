@@ -25,6 +25,28 @@ async function buscarFilmesPorTitulo(termo) {
   }));
 }
 
+async function buscarAtores(termo) {
+  if (!termo.trim()) return [];
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/search/person?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${encodeURIComponent(termo)}&language=pt-BR&page=1`
+    );
+    const data = await res.json();
+    return (data.results || [])
+      .filter((p) => p.known_for_department === "Acting") // <- só atores
+      .slice(0, 8)
+      .map((p) => ({
+        id: p.id,
+        nome: p.name,
+        foto: p.profile_path
+          ? `${process.env.NEXT_PUBLIC_TMDB_IMAGE_BASE}/w185${p.profile_path}`
+          : null,
+        conhecidoPor: p.known_for_department,
+        filmeConhecido: p.known_for?.[0]?.title || p.known_for?.[0]?.name || null,
+      }));
+  } catch { return []; }
+}
+
 async function buscarFilmesPorTituloOriginal(termo) {
   if (!termo.trim()) return [];
   try {
@@ -187,10 +209,38 @@ function CardUsuario({ usuario, usuarioLogado }) {
   );
 }
 
+function CardAtor({ ator }) {
+  const router = useRouter();
+  return (
+    <div className={styles.card} onClick={() => router.push(`/atores/${ator.id}`)} style={{ cursor: 'pointer' }}>
+      <div className={styles.cardPoster}>
+        {ator.foto ? (
+          <img src={ator.foto} alt={ator.nome} className={styles.cardImg}
+            style={{ objectPosition: 'center top' }} />
+        ) : (
+          <div className={styles.cardSemPoster} />
+        )}
+      </div>
+      <div className={styles.cardInfo}>
+        <p className={styles.cardTitulo}>{ator.nome}</p>
+        {ator.filmeConhecido && (
+          <span className={styles.cardAno}>{ator.filmeConhecido}</span>
+        )}
+        {ator.conhecidoPor && (
+          <div className={styles.cardCategorias}>
+            <span className={styles.cardTag}>{ator.conhecidoPor}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function ResultadosBusca({ termo, usuarioLogado }) {
   const [filmes, setFilmes] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [detalhes, setDetalhes] = useState({});
+  const [atores, setAtores] = useState([]);
   const [buscando, setBuscando] = useState(false);
 
   useEffect(() => {
@@ -200,12 +250,14 @@ function ResultadosBusca({ termo, usuarioLogado }) {
     setUsuarios([]);
     setDetalhes({});
 
-    Promise.allSettled([buscarFilmes(termo), buscarUsuarios(termo)])
-      .then(async ([resFilmes, resUsuarios]) => {
+    Promise.allSettled([buscarFilmes(termo), buscarUsuarios(termo), buscarAtores(termo)])
+      .then(async ([resFilmes, resUsuarios, resAtores]) => {
         const filmesList = resFilmes.status === "fulfilled" ? resFilmes.value : [];
         const usuariosList = resUsuarios.status === "fulfilled" ? resUsuarios.value : [];
+        const atoresList = resAtores.status === "fulfilled" ? resAtores.value : [];
         setFilmes(filmesList);
         setUsuarios(usuariosList);
+        setAtores(atoresList);
 
         const detalhesMap = {};
         await Promise.allSettled(
@@ -223,7 +275,7 @@ function ResultadosBusca({ termo, usuarioLogado }) {
 
   if (!termo) return null;
 
-  const total = filmes.length + usuarios.length;
+  const total = filmes.length + usuarios.length + atores.length;
 
   return (
     <div className={styles.resultados}>
@@ -260,6 +312,17 @@ function ResultadosBusca({ termo, usuarioLogado }) {
           <div className={styles.grade}>
             {filmes.map((f) => (
               <CardFilme key={f.objectId} filme={f} detalhes={detalhes[f.tmdbId]} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!buscando && atores.length > 0 && (
+        <div className={styles.secao}>
+          <h3 className={styles.secaoTitulo}>atores</h3>
+          <div className={styles.grade}>
+            {atores.map((a) => (
+              <CardAtor key={a.id} ator={a} />
             ))}
           </div>
         </div>
