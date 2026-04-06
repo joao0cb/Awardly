@@ -18,6 +18,7 @@ export function useFilmes(ano = null) {
         const Filme = Parse.Object.extend('Filme');
         const query = new Parse.Query(Filme);
         if (ano) query.equalTo('ano', ano);
+        query.limit(1000);
         const filmesDB = await query.find();
 
         const resultados = await Promise.allSettled(
