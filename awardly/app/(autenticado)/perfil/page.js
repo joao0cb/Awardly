@@ -85,7 +85,7 @@ function Estatuetas({ valor }) {
             {cheia ? (
               <img src="/oscar2.png" className={styles.estatuetaMini} />
             ) : meia ? (
-              <div style={{ position: "relative", width: 16, height: 16 }}>
+              <div style={{ position: "relative", width: 28, height: 28 }}>
                 <img src="/oscar2.png" className={styles.estatuetaMini} style={{ clipPath: "inset(0 50% 0 0)", position: "absolute" }} />
                 <img src="/oscarvazio.png" className={styles.estatuetaMini} style={{ clipPath: "inset(0 0 0 50%)", position: "absolute", opacity: 0.3 }} />
               </div>

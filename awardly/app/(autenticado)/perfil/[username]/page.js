@@ -6,6 +6,8 @@ import styles from "@/styles/perfil.module.css";
 import pub from "@/styles/perfilPublico.module.css";
 import { getFilme, getImageURL } from "@/lib/tmdb";
 import { useRouter, useParams } from "next/navigation";
+import AtividadeItem from "@/app/components/AtividadeItem";
+import CardLogCategoria from "@/app/components/CardLogCategoria";
 
 function tempoRelativo(date) {
   if (!date) return "";
@@ -31,7 +33,7 @@ function Estatuetas({ valor }) {
             {cheia ? (
               <img src="/oscar2.png" className={styles.estatuetaMini} />
             ) : meia ? (
-              <div style={{ position: "relative", width: 16, height: 16 }}>
+              <div style={{ position: "relative", width: 28, height: 28 }}>
                 <img src="/oscar2.png" className={styles.estatuetaMini} style={{ clipPath: "inset(0 50% 0 0)", position: "absolute" }} />
                 <img src="/oscarvazio.png" className={styles.estatuetaMini} style={{ clipPath: "inset(0 0 0 50%)", position: "absolute", opacity: 0.3 }} />
               </div>
@@ -61,6 +63,31 @@ function FilmeFavorito({ filme }) {
   );
 }
 
+function FilmeVisto({ filme }) {
+  const router = useRouter();
+  return (
+    <div className={styles.filmeFav} onClick={() => router.push(`/filmes/${filme.id}`)}>
+      {filme.poster_path ? (
+        <img src={getImageURL(filme.poster_path, "w342")} alt={filme.title} className={styles.filmeFavImg} />
+      ) : (
+        <div className={styles.filmeFavSemPoster} />
+      )}
+      {filme.like && (
+        <img src="/envelopecoracao.png" className={styles.cardFilmeLike} alt="" />
+      )}
+      <div className={styles.filmeFavOverlay}>
+        <span className={styles.filmeFavTitulo}>{filme.title}</span>
+        {filme.estatuetas > 0 && (
+          <div className={styles.filmeVistoNota}>
+            <img src="/oscar2.png" className={styles.filmeVistoOscar} alt="" />
+            <span>{filme.estatuetas}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function ReviewCard({ review }) {
   return (
     <div className={styles.reviewCard}>
@@ -78,19 +105,6 @@ function ReviewCard({ review }) {
   );
 }
 
-function AtividadeItem({ item }) {
-  const icones = { log: "🎬", review: "✍️", seguindo: "👤" };
-  return (
-    <div className={styles.atividadeItem}>
-      <span className={styles.atividadeIcone}>{icones[item.tipo]}</span>
-      <div className={styles.atividadeInfo}>
-        <p className={styles.atividadeTexto}>{item.texto}</p>
-        <span className={styles.atividadeData}>{item.data}</span>
-      </div>
-    </div>
-  );
-}
-
 function userPointer(userId) {
   const u = new Parse.User();
   u.id = userId;
@@ -102,7 +116,7 @@ export default function PerfilPublico() {
   const router = useRouter();
 
   const [dadosAlvo, setDadosAlvo] = useState(null);
-  const [alvoId, setAlvoId] = useState(null); // objectId guardado no state
+  const [alvoId, setAlvoId] = useState(null);
   const [usuarioLogado, setUsuarioLogado] = useState(null);
   const [seguindo, setSeguindo] = useState(false);
   const [salvandoFollow, setSalvandoFollow] = useState(false);
@@ -111,8 +125,11 @@ export default function PerfilPublico() {
   const [totalFilmes, setTotalFilmes] = useState(0);
   const [totalReviews, setTotalReviews] = useState(0);
   const [totalWatchlist, setTotalWatchlist] = useState(0);
+  const [totalCategorias, setTotalCategorias] = useState(0);
   const [filmesFavoritos, setFilmesFavoritos] = useState([]);
+  const [filmesVistos, setFilmesVistos] = useState([]);
   const [reviewsRecentes, setReviewsRecentes] = useState([]);
+  const [logsCategoria, setLogsCategoria] = useState([]);
   const [atividade, setAtividade] = useState([]);
   const [carregando, setCarregando] = useState(true);
 
@@ -132,9 +149,9 @@ export default function PerfilPublico() {
         const dados = await Parse.Cloud.run("buscarUsuarioPorUsername", { username });
         if (!dados) throw new Error("Usuário não encontrado");
 
-        const id = dados.objectId; // id local, usado só neste useEffect
+        const id = dados.objectId;
         setDadosAlvo(dados);
-        setAlvoId(id); // salva no state pra usar no handleToggleFollow
+        setAlvoId(id);
 
         const alvoPtr = userPointer(id);
 
@@ -152,16 +169,21 @@ export default function PerfilPublico() {
         qSeguindo.equalTo("seguidor", alvoPtr);
         const qWatch = new Parse.Query("Watchlist");
         qWatch.equalTo("usuarioId", alvoPtr);
+        const qCat = new Parse.Query("LogCategoria");
+        qCat.equalTo("usuarioId", alvoPtr);
 
-        const [nSeg, nSeguindo, nWatch] = await Promise.all([
+        const [nSeg, nSeguindo, nWatch, nCat] = await Promise.all([
           qSeg.count(),
           qSeguindo.count(),
           qWatch.count(),
+          qCat.count(),
         ]);
         setSeguidores(nSeg);
         setSeguindoCount(nSeguindo);
         setTotalWatchlist(nWatch);
+        setTotalCategorias(nCat);
 
+        // Favoritos
         const tmdbIds = dados.favoritos || [];
         if (tmdbIds.length > 0) {
           const res = await Promise.allSettled(tmdbIds.map((tid) => getFilme(tid)));
@@ -170,6 +192,7 @@ export default function PerfilPublico() {
           );
         }
 
+        // Logs
         const qLogs = new Parse.Query("Log");
         qLogs.equalTo("usuarioId", alvoPtr);
         qLogs.descending("createdAt");
@@ -177,9 +200,21 @@ export default function PerfilPublico() {
         const logs = await qLogs.find();
         setTotalFilmes(logs.length);
 
+        // 4 filmes vistos mais recentes
+        const top4Logs = logs.slice(0, 4);
+        const filmesVistosDetalhes = await Promise.allSettled(
+          top4Logs.map(async (l) => {
+            const f = await getFilme(l.get("filmeId"));
+            return f ? { ...f, estatuetas: l.get("estatuetas") || 0, like: l.get("like") || false } : null;
+          })
+        );
+        setFilmesVistos(
+          filmesVistosDetalhes.filter((r) => r.status === "fulfilled" && r.value).map((r) => r.value)
+        );
+
+        // Reviews
         const logsComReview = logs.filter((l) => l.get("review"));
         setTotalReviews(logsComReview.length);
-
         const reviewsDetalhes = await Promise.allSettled(
           logsComReview.slice(0, 3).map(async (r) => {
             const filme = await getFilme(r.get("filmeId"));
@@ -197,7 +232,26 @@ export default function PerfilPublico() {
           reviewsDetalhes.filter((r) => r.status === "fulfilled").map((r) => r.value)
         );
 
+        // Logs de categoria
+        const qLogCat = new Parse.Query("LogCategoria");
+        qLogCat.equalTo("usuarioId", alvoPtr);
+        qLogCat.descending("createdAt");
+        qLogCat.limit(2);
+        const logsCat = await qLogCat.find();
+        setLogsCategoria(logsCat.map((l) => ({
+          id: l.id,
+          categoria: l.get("categoria"),
+          ano: l.get("ano"),
+          vencedorReal: l.get("vencedorReal"),
+          deveriaTerGanhado: l.get("deveriaTerGanhado"),
+          queriaQueGanhasse: l.get("queriaQueGanhasse"),
+          review: l.get("review"),
+          data: tempoRelativo(l.createdAt),
+        })));
+
+        // Atividade
         const atividadeItems = [];
+
         const logsAtividade = await Promise.allSettled(
           logs.slice(0, 5).map(async (l) => {
             const filme = await getFilme(l.get("filmeId"));
@@ -209,10 +263,20 @@ export default function PerfilPublico() {
                 : `registrou "${filme?.title || "filme"}"`,
               data: tempoRelativo(l.createdAt),
               createdAt: l.createdAt,
+              link: filme ? `/filmes/${l.get("filmeId")}` : null,
             };
           })
         );
         logsAtividade.filter((r) => r.status === "fulfilled").forEach((r) => atividadeItems.push(r.value));
+
+        logsCat.forEach((l) => {
+          atividadeItems.push({
+            tipo: "categoria",
+            texto: `avaliou "${l.get("categoria")}" (${l.get("ano")})`,
+            data: tempoRelativo(l.createdAt),
+            createdAt: l.createdAt,
+          });
+        });
 
         const qFollows = new Parse.Query("Follow");
         qFollows.equalTo("seguidor", alvoPtr);
@@ -224,7 +288,7 @@ export default function PerfilPublico() {
           const seg = f.get("seguindo");
           atividadeItems.push({
             tipo: "seguindo",
-            texto: `começou a seguir ${seg?.get("nome") || seg?.get("username") || "alguém"}`,
+            texto: `começou a seguir "${seg?.get("nome") || seg?.get("username") || "alguém"}"`,
             data: tempoRelativo(f.createdAt),
             createdAt: f.createdAt,
           });
@@ -245,7 +309,7 @@ export default function PerfilPublico() {
   async function handleToggleFollow() {
     if (!usuarioLogado || !alvoId || salvandoFollow) return;
     setSalvandoFollow(true);
-    const alvoPtr = userPointer(alvoId); // usa alvoId do state
+    const alvoPtr = userPointer(alvoId);
     try {
       if (seguindo) {
         const qFollow = new Parse.Query("Follow");
@@ -298,10 +362,6 @@ export default function PerfilPublico() {
   const foto = dadosAlvo.foto || null;
   const bannerUrl = dadosAlvo.banner || null;
 
-  const nomeLogado = usuarioLogado?.get("nome") || usuarioLogado?.get("username") || "";
-  const fotoLogadoObj = usuarioLogado?.get("foto");
-  const fotoLogado = (typeof fotoLogadoObj?.url === "function" ? fotoLogadoObj.url() : fotoLogadoObj?._url) || null;
-
   return (
     <main className={styles.principal}>
       <div className={styles.bannerWrap}>
@@ -340,6 +400,10 @@ export default function PerfilPublico() {
           <span className={styles.estatLabel}>filmes registrados</span>
         </div>
         <div className={styles.estatCard}>
+          <span className={styles.estatValor}>{totalCategorias}</span>
+          <span className={styles.estatLabel}>categorias avaliadas</span>
+        </div>
+        <div className={styles.estatCard}>
           <span className={styles.estatValor}>{totalReviews}</span>
           <span className={styles.estatLabel}>reviews</span>
         </div>
@@ -365,6 +429,7 @@ export default function PerfilPublico() {
 
       <div className={styles.conteudo}>
         <div className={styles.colunaEsq}>
+
           <section className={styles.secao}>
             <h2 className={styles.tituloSecao}>filmes favoritos</h2>
             {filmesFavoritos.length > 0 ? (
@@ -375,6 +440,27 @@ export default function PerfilPublico() {
               </div>
             ) : (
               <p className={styles.vazio}>Nenhum filme favorito ainda.</p>
+            )}
+          </section>
+
+          <section className={styles.secao}>
+            <h2 className={styles.tituloSecao}>recentes</h2>
+            {filmesVistos.length > 0 && (
+              <div className={styles.gradeFilmesFav}>
+                {filmesVistos.map((f) => (
+                  <FilmeVisto key={f.id} filme={f} />
+                ))}
+              </div>
+            )}
+            {logsCategoria.length > 0 && (
+              <div className={styles.listaLogsCat}>
+                {logsCategoria.map((l) => (
+                  <CardLogCategoria key={l.id} log={l} />
+                ))}
+              </div>
+            )}
+            {filmesVistos.length === 0 && logsCategoria.length === 0 && (
+              <p className={styles.vazio}>Nenhuma atividade ainda.</p>
             )}
           </section>
 

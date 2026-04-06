@@ -81,7 +81,7 @@ function Estatuetas({ valor, onChange }) {
             {cheia ? (
               <img src="/oscar2.png" className="log-estatueta-img" />
             ) : meia ? (
-              <div style={{ position: 'relative', width: 28, height: 28 }}>
+              <div style={{ position: 'relative', width: 38, height: 38 }}>
                 <img src="/oscar2.png" className="log-estatueta-img" style={{ clipPath: 'inset(0 50% 0 0)', position: 'absolute' }} />
                 <img src="/oscarvazio.png" className="log-estatueta-img" style={{ clipPath: 'inset(0 0 0 50%)', position: 'absolute', opacity: 0.35 }} />
               </div>
@@ -135,7 +135,6 @@ function PainelLog({ onSalvo, onFechar, tmdbId }) {
       } catch {}
       setSalvo(true);
       onSalvo?.();
-      setTimeout(() => onFechar(), 1400);
     } catch (e) {
       setErro(e.message || 'Erro ao registrar.');
     } finally {
@@ -169,7 +168,7 @@ function PainelLog({ onSalvo, onFechar, tmdbId }) {
       </div>
       <div className="log-campo">
         <label className="log-label">review <span className="log-opcional">(opcional)</span></label>
-        <textarea value={review} onChange={(e) => setReview(e.target.value)} placeholder="O que você achou?" className="log-textarea" rows={2} maxLength={1000} />
+        <textarea value={review} onChange={(e) => setReview(e.target.value)} placeholder="O que você achou?" className="log-textarea" rows={2} maxLength={500} />
       </div>
       {erro && <p className="log-erro">{erro}</p>}
       <div className="log-acoes">
@@ -395,7 +394,7 @@ export default function FilmeUnico({ params }) {
                   onFechar={() => setLogAberto(false)}
                   onSalvo={() => {
                     setNaWatchlist(false);
-                    // marca como logado
+                    setLogAberto(false); // <- fecha imediatamente
                     const user = Parse.User.current();
                     const qLog = new Parse.Query('Log');
                     qLog.equalTo('usuarioId', user);

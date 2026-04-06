@@ -399,8 +399,8 @@
 /* Log painel */
 .log-painel {
   margin-top: 0;
-  min-width: 280px;
-  max-width: 320px;
+  min-width: 480px;
+  max-width: 420px;
   padding: 16px;
   background: rgba(10,9,6,0.88);
   border: 1px solid rgba(201,168,76,0.25);
@@ -426,7 +426,7 @@
 }
 
 .log-salvo-texto {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 18px;
   color: var(--gold, #FFD000);
   letter-spacing: 0.08em;
@@ -445,7 +445,7 @@
 }
 
 .log-label {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -475,18 +475,22 @@
 }
 
 .log-input-data:focus {
-  border-color: rgba(201, 168, 76, 0.6);
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 .log-btn-like {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 2px;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: border-color 0.2s ease, background 0.2s ease;
   display: flex;
   align-items: center;
+  justify-content: center;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .log-btn-like:hover {
@@ -510,11 +514,12 @@
   gap: 2px;
   cursor: pointer;
   user-select: none;
+  margin-left: -9px;
 }
 
 .log-estatueta-slot {
-  width: 30px;
-  height: 30px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -522,8 +527,8 @@
 }
 
 .log-estatueta-img {
-  width: 26px;
-  height: 26px;
+  width: 38px;
+  height: 38px;
   object-fit: contain;
   transition: transform 0.1s ease;
 }
@@ -548,9 +553,9 @@
   font-size: 13px;
   color: var(--text, #fff);
   outline: none;
-  resize: none;
+  resize: none; 
   line-height: 1.6;
-  font-family: inherit;
+  font-family: 'Poppins', sans-serif;
   transition: border-color 0.2s ease;
   width: 100%;
   box-sizing: border-box;
@@ -585,7 +590,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 2px;
   color: rgba(255, 255, 255, 0.35);
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 13px;
   letter-spacing: 0.06em;
   cursor: pointer;
@@ -603,7 +608,7 @@
   border: none;
   border-radius: 2px;
   color: #0a0906;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.1em;

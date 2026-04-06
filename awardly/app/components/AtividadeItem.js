@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import styles from "@/styles/perfil.module.css";
 
-const icones = { log: "🎬", review: "✍️", seguindo: "👤", categoria: "🏆" };
+const icones = { log: "/claquete.png", review: "/escrevendo.png", seguindo: "/pessoa.png", categoria: "/trofeu.png" };
 
 // Destaca palavras entre aspas ou entre ** em amarelo
 function TextoDestacado({ texto }) {
@@ -44,7 +44,7 @@ export default function AtividadeItem({ item }) {
       className={`${styles.atividadeItem} ${item.link ? styles.atividadeItemClicavel : ""}`}
       onClick={handleClick}
     >
-      <span className={styles.atividadeIcone}>{icones[item.tipo]}</span>
+      <img src={icones[item.tipo]} alt={item.tipo} className={styles.atividadeIcone} />
       <div className={styles.atividadeInfo}>
         <p className={styles.atividadeTexto}>
           <TextoDestacado texto={item.texto} />
