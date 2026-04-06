@@ -732,7 +732,6 @@
   transition: color 0.15s ease;
 }
 
-<<<<<<< HEAD
 .cardFilmeAvalImg:hover .btnRemoverWatch {
   opacity: 1;
 }
@@ -880,9 +879,6 @@
 .estatuetaMiniValor {
   font-family: 'Poppins', sans-serif;
   font-size: 12px;
-=======
-.atividadeItemClicavel:hover .atividadeSeta {
->>>>>>> 4d8b6eabaa27e81becdc2901a706e4f9dcaf4b1b
   color: var(--gold);
 }
 
